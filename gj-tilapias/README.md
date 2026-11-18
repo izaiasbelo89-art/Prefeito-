@@ -15,3 +15,7 @@ Coordenadas: 3°42'55.2"S 38°33'41.6"W.
 - `assets/mapas/como-chegar-rota.png` / `como-chegar-sem-rota.png`: mapa OpenStreetMap 1080×1920 (rota desde a Av. Francisco Sá). Animação do carro chegando.
 - `assets/mapas/satelite-bairro.png` / `satelite-zoom.png`: vista de satélite (Google) para a aproximação aérea.
 - `assets/fotos/fachada.png`: fachada da loja (Street View, © 2022 Google).
+- `assets/fotos/caminhao-print-instagram.png`: print de um Reels do @gj_tilapias (caminhão em frente à loja, à noite).
+- `assets/fotos/caminhao-recorte.png`: recorte sem a interface do Instagram (975×1325).
+
+Instagram: @gj_tilapias. Slogan no caminhão: "Qualidade Incomparável".
