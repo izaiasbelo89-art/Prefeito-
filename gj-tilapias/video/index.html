@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GJ Tilápias Reels</title>
+<style>
+  html,body{margin:0;background:#00187A;height:100%}
+  body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;font-family:Inter,system-ui,sans-serif;color:#fff}
+  canvas{display:block;height:min(92vh,177.7vw);width:auto;aspect-ratio:9/16;background:#fff}
+  .bar{display:flex;gap:10px;align-items:center;font-size:14px}
+  button{font:inherit;padding:6px 14px;border-radius:8px;border:0;background:#D7141A;color:#fff;cursor:pointer}
+  body.render .bar{display:none}
+  body.render canvas{height:auto;width:auto}
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<div class="bar"><button id="play">▶ Reproduzir</button><label><input type="checkbox" id="safe"> Áreas da interface (Reels/TikTok)</label><span id="tc">0.0s</span></div>
+<script src="gj.js"></script>
+</body>
+</html>
