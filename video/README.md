@@ -1,8 +1,37 @@
-# TC Soluções Tecnológicas — vídeo de apresentação (Reels / TikTok)
+# TC Soluções Tecnológicas — vídeos de apresentação (Reels / TikTok)
+
+Duas versões, ambas 1080×1920 (9:16), 30 fps, H.264 + AAC, −14 LUFS, com a **logomarca original** (`assets/logo.png`).
+
+- **v1 — Jornada do hóspede** (43,5 s): `out/tc-solucoes-reels.mp4` · prévia `index.html` · cenas `scenes_v1.js` · trilha `audio.py`
+- **v2 — O hotel por dentro** (44 s): `out/tc-solucoes-reels-v2.mp4` · prévia `index2.html` · cenas `scenes_v2.js` · trilha `audio_v2.py`
+
+Funções compartilhadas (personagens, telas, ícones, logo, serviços) ficam em `core.js`.
+
+## v2 — roteiro e tempos
+
+| Tempo | Cena | Ação visual | Texto |
+|---|---|---|---|
+| 0–6,4 | Abertura | Hotel ilustrado em perspectiva; câmera se aproxima e a fachada se abre revelando Quartos, Administração, Recepção e Restaurante em atividade, cada vez mais rápida | **Seu hotel tem vários setores.** → **E todos precisam funcionar juntos.** |
+| 6,4–8,4 | Reservas | Câmera entra na recepção: reserva chega, sistema carregando, hóspede esperando | selo **Reservas** |
+| 8,4–10,4 | Restaurante | Consumo do quarto 204 aguardando lançamento ("Pendente") | selo **Restaurante** |
+| 10,4–12,4 | Quartos | Quarto 305 pronto (camareira concluiu), mas o painel ainda mostra "Ocupado" | selo **Quartos** |
+| 12,4–14,4 | Gestão | Gestor conferindo papéis e planilhas espalhados | selo **Gestão** |
+| 14,4–17,8 | Efeito no conjunto | Câmera se afasta; informações se acumulam entre os setores; alertas se espalham | **Quando uma etapa falha, outras sentem.** |
+| 17,8–19,3 | Logo | Impacto e revelação da logomarca | |
+| 19,3–21,0 | Entrada da TC | Gestor e profissional da TC observam a operação; varredura de análise sobre o hotel | |
+| 21,0–30,6 | Serviços (2,4 s cada) | Consultoria em TI (análise e planejamento) · Infraestrutura (rede, Wi-Fi, equipamentos) · Suporte técnico (chamado resolvido) · Consultoria em hotelaria (análise da rotina) | nome do serviço + legenda da ação |
+| 30,6–35,0 | Informação circulando | Linha azul conecta os setores; Reserva consultada ✓ → Quarto atualizado ✓ → Consumo na conta ✓ → Check-out concluído ✓ | um selo por vez |
+| 35,0–40,0 | Encerramento | Câmera percorre o hotel: equipe trabalhando, hóspedes atendidos | **Da reserva ao fechamento da conta.** → **Tecnologia e consultoria para a sua operação.** |
+| 40,0–44,0 | Final | Logo + **@tc_solucoes** | |
+
+Para validar (v2): legendas dos serviços ("Análise dos sistemas e planejamento.", "Rede e equipamentos organizados.", "Atendimento técnico no dia a dia.", "Um olhar sobre a rotina do seu hotel.") e os exemplos de telas — todas genéricas, sem marcas de sistemas, aguardando confirmação do Telmo.
+
+---
+
+## v1 — Jornada do hóspede
 
 Vídeo vertical 1080×1920 (9:16), 30 fps, **43,5 s**, H.264 + AAC, áudio normalizado em −14 LUFS.
 
-Arquivo final: `out/tc-solucoes-reels.mp4`
 
 ## Roteiro e tempos
 
@@ -27,7 +56,7 @@ Arquivo final: `out/tc-solucoes-reels.mp4`
 
 ## Pontos para validação
 
-- **Logomarca:** o arquivo original não estava no repositório; o vídeo usa um **logo provisório** ("TC SOLUÇÕES TECNOLÓGICAS"). Coloque a logo original em `assets/logo.png` (PNG com fundo transparente, versão para fundo claro) e renderize de novo. Ela entra automaticamente, sem distorção, em todas as aparições.
+- **Logomarca:** original aplicada a partir de `assets/logo.png` (PNG transparente, sem distorção).
 - **Telas de sistema:** todas são ilustrativas e genéricas (sem marcas de software, integrações ou prazos de atendimento).
 - Rótulos ilustrativos usados dentro das telas e cenas: "Nova reserva · Quarto 204 · 2 diárias", "Pendente", "Lançar na conta do quarto", "Chamado aberto · Recepção: computador sem conexão", "Planejamento de TI: Diagnóstico / Prioridades / Plano de ação", "Rotina do hotel". Ajuste se preferir outra redação.
 - Música e efeitos são **originais, sintetizados por código** (`audio.py`), sem uso de faixas de terceiros.
@@ -41,8 +70,9 @@ cd video
 python3 audio.py                                  # trilha -> out/audio_raw.wav
 ffmpeg -y -i out/audio_raw.wav -af loudnorm=I=-14:TP=-1.5:LRA=11 -ar 44100 out/audio.wav
 node render.js                                    # quadros -> out/video_noaudio.mp4
+# v2: python3 audio_v2.py ; PAGE=index2.html OUT=video_v2_noaudio.mp4 node render.js
 ffmpeg -y -i out/video_noaudio.mp4 -i out/audio.wav -c:v copy -c:a aac -b:a 192k -shortest -movflags +faststart out/tc-solucoes-reels.mp4
 ```
 
-Prévia interativa com áudio: sirva a pasta (`python3 -m http.server` dentro de `video/`) e abra `index.html`.
+Prévia interativa com áudio: sirva a pasta (`python3 -m http.server` dentro de `video/`) e abra `index.html` (v1) ou `index2.html` (v2).
 Quadros avulsos: `node render.js --stills 3.5,10,24.5`.
