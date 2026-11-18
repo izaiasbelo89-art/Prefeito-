@@ -20,8 +20,15 @@ Coordenadas: 3°42'55.2"S 38°33'41.6"W.
 
 Instagram: @gj_tilapias. Slogan no caminhão: "Qualidade Incomparável".
 
+## Locução tratada
+`audio/locucao-final.wav` (31,3 s), gerada por `video/process_voice.py` a partir de `audio/locucao-original-recortada.wav` (38,3 s):
+pausas de fim de frase reduzidas para ~0,26 s e de vírgula para ~0,17 s, ritmo 8% mais rápido sem mudar o tom,
+equalização (menos abafado, mais presença), de-esser e compressão. O script grava `video/warp.json`/`warp.js`, que
+sincroniza a animação ao novo ritmo (os tempos da tabela abaixo são da locução original).
+Cenas sem fundo próprio (satélite, WhatsApp, final) usam a fachada desfocada como fundo.
+
 ## Vídeo (Reels/TikTok)
-`video/out/gj-tilapias-reels.mp4`: 1080×1920, 30 fps, 40 s, −14 LUFS (locução + música com ducking + efeitos).
+`video/out/gj-tilapias-reels.mp4`: 1080×1920, 30 fps, 33 s, −14 LUFS (locução + música com ducking + efeitos).
 A logomarca fica fixa no canto superior direito (some só quando a logo aparece grande).
 
 Locução recortada no início real da fala (38,3 s). Os primeiros cortes tinham um trecho repetido

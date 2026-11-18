@@ -238,6 +238,16 @@ function facadeOverlays(t, s, fx, fy, sy = 960, o = {}) {
   ctx.restore();
 }
 
+/* fundo com a fachada da loja desfocada (no lugar de fundos lisos) */
+function storeBG(t, dark = .6, light = false) {
+  ctx.fillStyle = C.navy2; ctx.fillRect(0, 0, W, H);
+  ctx.save(); ctx.filter = 'blur(12px)'; facadeCover(t, 1.32 + .04 * Math.sin(t * .3), 470 + Math.sin(t * .25) * 20, 830, 1060); ctx.restore();
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, `rgba(6,19,79,${dark * .85})`); g.addColorStop(.5, `rgba(6,19,79,${dark})`); g.addColorStop(1, `rgba(6,19,79,${Math.min(.95, dark + .25)})`);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  bubbles(t, 10, .6);
+}
+
 /* ---- 1. Abertura na fachada ---- */
 function storeCam(t) { // [zoom, fx, fy]
   const a = eio(P(t, 0, 5.2));
@@ -328,7 +338,7 @@ function drawSeafood(t, s) {
 /* ---- 3. "E pra chegar é fácil." (satélite) ---- */
 const SAT_A_PIN = [362, 470], SAT_B_PIN = [310, 380];
 function sceneSatellite(t) {
-  oceanBG(t);
+  storeBG(t, .62);
   const a = P(t, T.sat, T.sat + .35);
   const cx = 540, cy = 1085, cw = 900, ch = 860;
   const grow = eio(P(t, T.map - .45, T.map + .1));
@@ -462,7 +472,7 @@ function waIcon(x, y, r, bg = C.green2) {
   ctx.restore();
 }
 function sceneWhats(t) {
-  oceanBG(t);
+  storeBG(t, .66);
   // celular
   const pin = eback(P(t, T.wpp, T.wpp + .45));
   ctx.save(); ctx.translate(540, 970); ctx.scale(pin * .8, pin * .8); ctx.rotate(Math.sin(t * 1.5) * .02);
@@ -493,17 +503,17 @@ function sceneWhats(t) {
 
 /* ---- 8. Final ---- */
 function sceneEnd(t) {
-  creamBG(t);
+  storeBG(t, .5, true);
   const lp = eback(P(t, T.end, T.end + .5));
   for (let k = 0; k < 2; k++) { const p = P(t, T.end + k * .15, T.end + 1.1 + k * .15); if (p > 0 && p < 1) ring(540, 820, 300 + eo(p) * 380, `rgba(10,31,122,${.35 * (1 - p)})`, 10 * (1 - p) + 2); }
   ctx.save(); ctx.translate(540, 820); ctx.rotate((1 - clamp(lp)) * .3); drawLogo(0, 0, 700 * lp, clamp(lp * 1.4)); ctx.restore();
   const a1 = eo(P(t, T.end + .5, T.end + .85));
   ctx.save(); ctx.globalAlpha = a1;
-  font(54, 900); const w = 600; shadow(20, 8); fillRR(540 - w / 2, 1262 - 44 + (1 - a1) * 20, w, 88, 44, C.navy); noShadow();
+  font(54, 900); const w = 600; shadow(20, 8); fillRR(540 - w / 2, 1262 - 44 + (1 - a1) * 20, w, 88, 44, C.red); noShadow();
   txt('@gj_tilapias', 540, 1266 + (1 - a1) * 20, 54, '#fff', 900);
   ctx.restore();
   const a2 = eo(P(t, T.end + .8, T.end + 1.15));
-  ctx.save(); ctx.globalAlpha = a2; txt('Rua Ana Facó, 85 · Álvaro Weyne', 540, 1380, 38, C.navy, 800); txt('Fortaleza – CE', 540, 1430, 34, C.red, 800); ctx.restore();
+  ctx.save(); ctx.globalAlpha = a2; shadow(12, 3, 'rgba(0,0,0,.6)'); txt('Rua Ana Facó, 85 · Álvaro Weyne', 540, 1380, 40, '#fff', 800); txt('Fortaleza – CE', 540, 1432, 36, '#FFD9DA', 800); noShadow(); ctx.restore();
 }
 
 /* =====================================================================
@@ -521,7 +531,7 @@ function watermark(t) { // logo fixa no canto
   if (IMG.logo) ctx.drawImage(IMG.logo, -63, -63, 126, 126 * IMG.logo.height / IMG.logo.width);
   ctx.restore();
 }
-function renderFrame(t) {
+function renderOld(t) {
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.clearRect(0, 0, W, H);
   if (t < T.prod + .45) sceneStore(t);
   if (t >= T.prod && t < T.sat + .4) { ctx.save(); ctx.globalAlpha = cross(t, T.prod, .45); sceneBoard(t); ctx.restore(); }
@@ -544,18 +554,24 @@ function renderFrame(t) {
   headline(t, 31.65, 36.4, [[['Quer consultar']], [['o que tem '], ['hoje?', C.red]]], { y: Y });
   if (showSafe) drawSafeZones();
 }
-window.renderFrame = renderFrame; window.DUR = DUR; window.FPS = FPS;
+function unwarp(tn) { // tempo final -> tempo original (linear por trechos)
+  for (let i = 0; i < WARP.length - 1; i++) { const [o0, n0] = WARP[i], [o1, n1] = WARP[i + 1];
+    if (tn <= n1) return n1 > n0 ? lerp(o0, o1, (tn - n0) / (n1 - n0)) : o0; }
+  const [oL, nL] = WARP[WARP.length - 1]; return oL + (tn - nL);
+}
+const DUR_FINAL = WARP[WARP.length - 1][1] + (DUR - WARP[WARP.length - 1][0]);
+window.renderFrame = tn => renderOld(unwarp(tn)); window.DUR = DUR_FINAL; window.FPS = FPS;
 
 if (!/render/.test(location.search)) {
   const btn = document.getElementById('play'), tc = document.getElementById('tc');
   document.getElementById('safe').onchange = e => { showSafe = e.target.checked; };
   const audio = new Audio('out/audio_mix.wav');
   let start = null, playing = false;
-  window.ready.then(() => renderFrame(0));
+  window.ready.then(() => window.renderFrame(0));
   btn.onclick = () => {
     if (playing) { playing = false; audio.pause(); btn.textContent = '▶ Reproduzir'; return; }
     playing = true; btn.textContent = '❚❚ Pausar'; audio.currentTime = 0; audio.play().catch(() => {}); start = performance.now();
-    const loop = now => { if (!playing) return; const t = (now - start) / 1000; if (t > DUR) { playing = false; btn.textContent = '▶ Reproduzir'; return; } renderFrame(t); tc.textContent = t.toFixed(1) + 's'; requestAnimationFrame(loop); };
+    const loop = now => { if (!playing) return; const t = (now - start) / 1000; if (t > DUR_FINAL) { playing = false; btn.textContent = '▶ Reproduzir'; return; } window.renderFrame(t); tc.textContent = t.toFixed(1) + 's'; requestAnimationFrame(loop); };
     requestAnimationFrame(loop);
   };
 } else { document.body.classList.add('render'); }

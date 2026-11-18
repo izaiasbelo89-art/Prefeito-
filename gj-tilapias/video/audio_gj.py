@@ -6,7 +6,13 @@ import numpy as np, wave
 from scipy.signal import butter, sosfilt
 
 SR = 44100
-DUR = 40.0
+import json as _j
+WARP = _j.load(open('warp.json'))
+def fw(to):  # tempo original -> tempo final
+    for (o0, n0), (o1, n1) in zip(WARP, WARP[1:]):
+        if to <= o1: return n0 + (to - o0) * (n1 - n0) / (o1 - o0) if o1 > o0 else n0
+    return WARP[-1][1] + (to - WARP[-1][0])
+DUR = round(fw(40.0), 3)
 N = int(SR * (DUR + 0.5))
 rng = np.random.default_rng(7)
 BEAT = 0.5  # 120 BPM
@@ -109,7 +115,7 @@ def pad(ms, d, cut=1200, a=0.4):
 # ---------------- música (Ré maior, 116 BPM aprox. — compasso de 2 s) ----------------
 prog = [(50, [62, 66, 69, 74]), (45, [61, 64, 69, 73]), (47, [59, 62, 66, 71]), (43, [59, 62, 67, 71])]
 bar = 0; t0 = 0.0
-while t0 < 38.3:
+while t0 < fw(38.3):
     root, ch = prog[bar % 4]
     full = t0 >= 2.0
     add(music, pad([c - 12 for c in ch[:3]], 2.05, cut=1600, a=.2), t0, .12)
@@ -126,8 +132,8 @@ while t0 < 38.3:
         if k % 2 == 0 or full:
             add(music, pluck(ch[pat[k]] + 12, .16, cut=3200), t0 + k * .125, .07, pan=-.35 if k % 2 else .35)
     bar += 1; t0 += 2.0
-add(music, pad([50, 57, 62, 66, 69, 74], 1.8, cut=2600, a=.02), 38.3, .22)
-add(music, sine(73.4, 1.8) * env(int(SR * 1.8), .01, .9), 38.3, .25)
+add(music, pad([50, 57, 62, 66, 69, 74], 1.8, cut=2600, a=.02), fw(38.3), .22)
+add(music, sine(73.4, 1.8) * env(int(SR * 1.8), .01, .9), fw(38.3), .25)
 # ---------------- EFEITOS SONOROS ----------------
 
 def s_notif():
@@ -232,17 +238,17 @@ E += [(7.45, s_whoosh(.5, 500, 5000, .4), 1)]
 for tk in (7.79, 9.96, 11.16): E += [(tk - .05, s_whoosh(.35, 1000, 7000, .25), 1), (tk + .3, s_blip(1400), 1)]
 E += [(13.8, s_whoosh(.6, 300, 4000, .4), 1)]
 E += [(15.95, s_whoosh(.5, 500, 6000, .45), 1)]
-E += [(16.4, s_engine(3.6), 1), (18.6, s_click(), .8)]
+E += [(16.4, s_engine(3.0), 1), (18.6, s_click(), .8)]
 E += [(19.85, s_notif(), .7), (20.65, s_blip(1300), 1)]
 E += [(22.9, s_whoosh(.5, 600, 6000, .4), 1)]
 E += [(26.65, s_whoosh(.5, 400, 5000, .4), 1), (26.9, s_pop(800), .8), (28.81, s_pop(900), .8), (30.2, s_pop(1000), .8)]
 E += [(31.5, s_whoosh(.5, 500, 6000, .4), 1), (32.0, s_notif(), .6), (33.89, s_pop(900), 1), (33.95, s_confirm(), .9)]
 E += [(36.4, s_whoosh(.6, 400, 6000, .4), 1), (36.55, s_chime(), 1)]
-for t0, s, g in E: add(sfx, s, t0, g)
+for t0, s, g in E: add(sfx, s, fw(t0), g)
 
 # ---------------- locução + ducking ----------------
 import wave as _w
-with _w.open('../audio/locucao-gj-tilapias.wav') as w:
+with _w.open('../audio/locucao-final.wav') as w:
     ch_ = w.getnchannels(); v = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float) / 32768
 v = v.reshape(-1, ch_).mean(axis=1)
 voice = np.zeros(N); voice[:len(v)] = v[:N]
