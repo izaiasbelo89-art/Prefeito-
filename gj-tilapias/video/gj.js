@@ -2,7 +2,7 @@
 /* GJ Tilápias e Frutos do Mar — vídeo vertical 9:16 (1080x1920), 41 s.
    Sincronizado com a locução (audio/locucao-gj-tilapias.wav, 39,5 s).
    Toda a animação é função pura do tempo: renderFrame(t). */
-const W = 1080, H = 1920, FPS = 30, DUR = 41.0;
+const W = 1080, H = 1920, FPS = 30, DUR = 40.0;
 const cv = document.getElementById('c');
 const ctx = cv.getContext('2d');
 
@@ -193,48 +193,109 @@ function drawLogo(cx, cy, d, a = 1) { if (!IMG.logo || a <= 0) return; ctx.save(
 /* =====================================================================
    LINHA DO TEMPO (segundos da locução)
    ===================================================================== */
-const T = { fish: 3.75, prod: 8.9, sat: 15.2, map: 17.3, merc: 21.7, fac: 24.3, addr: 27.9, wpp: 32.8, end: 37.65 };
+const T = { store: 0, logo: 5.22, prod: 7.55, sat: 13.85, map: 16.05, merc: 20.5, fac: 23.1, addr: 26.7, wpp: 31.55, end: 36.45 };
+const DUR2 = 40.0;
 
-/* ---- 1. "Já sabe o que vai pra panela hoje?" / "Se bateu vontade de comer peixe, vem pra GJ Tilápias!" ---- */
-function sceneKitchen(t) {
-  // fundo: azulejo de cozinha em tons de azul
-  ctx.fillStyle = '#EAF0FB'; ctx.fillRect(0, 0, W, H);
-  ctx.strokeStyle = 'rgba(29,63,181,.10)'; ctx.lineWidth = 4;
-  for (let x = 0; x <= W; x += 120) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 1340); ctx.stroke(); }
-  for (let y = 0; y <= 1340; y += 120) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-  ctx.fillStyle = '#C9D6EE'; ctx.fillRect(0, 1340, W, 30); ctx.fillStyle = '#DDE5F4'; ctx.fillRect(0, 1370, W, 600);
-  const zoom = lerp(1, 1.08, P(t, 0, T.fish)) * (t > T.fish ? 1 + .04 * Math.exp(-(t - T.fish - .25) * 4) * P(t, T.fish + .15, T.fish + .3) : 1);
-  ctx.save(); ctx.translate(540, 1100); ctx.scale(zoom, zoom); ctx.translate(-540, -1100);
-  // panela
-  const bounce = t < T.fish ? Math.abs(Math.sin(t * 3)) * 6 : 0;
-  steam(470, 1020, 1.6, t, t < T.fish ? .8 : 1);
-  // peixe salta para a panela
-  if (t > T.fish - .25 && t < T.fish + 3.4) {
-    const p = P(t, T.fish - .25, T.fish + .45);
-    const x = lerp(1250, 490, p), y = lerp(1250, 1048, p) - Math.sin(p * Math.PI) * 560, a = lerp(-.9, .35, p);
-    if (p < 1) fish(x, y, 380, { t, a, wag: 1 });
-    else fish(490, 1048 + Math.sin(t * 20) * 2 * Math.exp(-(t - T.fish - .45) * 2), 380, { t, a: .0, cooked: P(t, T.fish + .6, T.fish + 2.2) > .5 ? true : false, wag: .1 });
-  }
-  pan(470, 1090 - bounce, 1.5, t);
-  // chiado: gotículas
-  if (t > T.fish + .4 && t < T.fish + 2.5) for (let i = 0; i < 12; i++) { const ph = ((t - T.fish) * 2 + rnd(i)) % 1; const a = -Math.PI * (.2 + rnd(i + 3) * .6);
-    circle(470 + Math.cos(a) * (150 + ph * 200) * (i % 2 ? 1 : -1), 1050 + Math.sin(a) * ph * 260, 6 * (1 - ph), '#FFD48A'); }
+/* ---- fachada: coordenadas na foto (941x1672) ---- */
+const FAC = { oval: [441, 855], ovalW: 312, sign: [270, 478, 390, 86], door: [445, 1075], fishes: [[668, 805], [652, 848], [668, 887]], sky: 425 };
+let SKY = null;
+function skyColors() {
+  if (SKY || !IMG.fachada) return SKY;
+  const c = document.createElement('canvas'); c.width = 941; c.height = 40; const x = c.getContext('2d'); x.drawImage(IMG.fachada, 0, 0);
+  const d = x.getImageData(0, 0, 941, 6).data; let r = 0, g = 0, b = 0, n = 0; for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
+  SKY = `rgb(${r / n | 0},${g / n | 0},${b / n | 0})`; return SKY;
+}
+function facadeCover(t, zoom, fx, fy, sy = 960) {
+  const img = IMG.fachada; if (!img) return 1;
+  const s = (H / img.height) * zoom;
+  const top = sy - fy * s; if (top > 0) { ctx.fillStyle = skyColors(); ctx.fillRect(0, 0, W, top + 4); }
+  imgCover(img, s, fx, fy, 540, sy);
+  return s;
+}
+function facadeOverlays(t, s, fx, fy, sy = 960, o = {}) {
+  // desenha por cima da foto, em coordenadas da foto
+  ctx.save(); ctx.translate(540, sy); ctx.scale(s, s); ctx.translate(-fx, -fy);
+  // nuvens passando no céu
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, 941, FAC.sky); ctx.clip(); ctx.filter = 'blur(10px)';
+  for (let i = 0; i < 4; i++) { const x = ((i * 330 + t * 22) % 1300) - 250, y = 90 + (i % 2) * 140;
+    ctx.globalAlpha = .55; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(x, y, 110, 30, 0, 0, TAU); ctx.ellipse(x + 60, y - 18, 70, 30, 0, 0, TAU); ctx.ellipse(x - 50, y - 8, 60, 24, 0, 0, TAU); ctx.fill(); }
   ctx.restore();
-  // pergunta
-  if (t < T.fish + .2) { const s = eback(P(t, .35, .7)) * (1 - P(t, T.fish - .1, T.fish + .1)); ctx.save(); ctx.translate(800, 820 + Math.sin(t * 3) * 8); ctx.scale(s, s); shadow(20, 8); circle(0, 0, 80, '#fff'); noShadow(); txt('?', 0, 6, 110, C.red, 900); ctx.restore(); }
-  // GJ entra
-  const lp = eback(P(t, 6.55, 7.0));
-  if (lp > 0) { ctx.save(); ctx.globalAlpha = clamp(lp * 1.5) * (1 - P(t, 8.65, 8.95)); ctx.fillStyle = 'rgba(10,31,122,.55)'; ctx.fillRect(0, 0, W, H); ctx.restore();
-    for (let k = 0; k < 2; k++) { const p = P(t, 6.55 + k * .15, 7.6 + k * .15); if (p > 0 && p < 1) ring(540, 1050, 260 + eo(p) * 420, `rgba(255,255,255,${.6 * (1 - p)})`, 10 * (1 - p) + 2); }
-    ctx.save(); ctx.translate(540, 1050); ctx.rotate((1 - clamp(lp)) * -.4); drawLogo(0, 0, 620 * lp, (1 - P(t, 8.65, 8.95))); ctx.restore(); }
+  // brilho correndo pelos letreiros
+  const sweep = (a, b, clipFn) => { const p = P(t, a, b); if (p <= 0 || p >= 1) return;
+    ctx.save(); clipFn(); ctx.clip(); ctx.globalCompositeOperation = 'lighter';
+    const x = lerp(-200, 1100, p); const g = ctx.createLinearGradient(x - 90, 0, x + 90, 0);
+    g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.5, 'rgba(255,255,255,.55)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 941, 1672); ctx.restore(); };
+  const sg = FAC.sign, ov = FAC.oval;
+  for (const a of (o.signSweeps || [])) sweep(a, a + .9, () => { ctx.beginPath(); ctx.rect(sg[0], sg[1], sg[2], sg[3]); });
+  for (const a of (o.ovalSweeps || [])) sweep(a, a + .8, () => { ctx.beginPath(); ctx.ellipse(ov[0], ov[1], FAC.ovalW / 2, 64, 0, 0, TAU); });
+  // bolhas saindo dos peixes pintados
+  if (o.bubbles) for (const [k, [fx2, fy2]] of FAC.fishes.entries()) for (let i = 0; i < 3; i++) {
+    const ph = (t * .7 + k * .33 + i * .33) % 1; ctx.globalAlpha = o.bubbles * Math.sin(ph * Math.PI) * .9;
+    ring(fx2 + 28 + Math.sin(ph * 6 + i) * 4, fy2 - 6 - ph * 50, 3 + ph * 4, '#DDF0FF', 1.6); }
+  // contorno da fachada
+  if (o.outline) { ctx.globalAlpha = o.outline; ctx.setLineDash([22, 14]); ctx.lineDashOffset = -t * 60; strokeRR(44, 424, 830, 784, 8, '#fff', 7); ctx.setLineDash([]); }
+  ctx.restore();
 }
 
-/* ---- 2. Produtos ---- */
+/* ---- 1. Abertura na fachada ---- */
+function storeCam(t) { // [zoom, fx, fy]
+  const a = eio(P(t, 0, 5.2));
+  let z = lerp(1.15, 1.8, a), fx = lerp(470, FAC.oval[0], a), fy = lerp(836, FAC.oval[1], a), sy = lerp(1117, 1090, a);
+  const b = eio(P(t, T.logo - .1, T.logo + .55));
+  z = lerp(z, 3.0, b); sy = lerp(sy, 1060, b);
+  return [z, fx, fy, sy];
+}
+function sceneStore(t) {
+  ctx.fillStyle = C.navy; ctx.fillRect(0, 0, W, H);
+  const [z, fx, fy, sy0] = storeCam(t);
+  const s = facadeCover(t, z, fx, fy, sy0);
+  facadeOverlays(t, s, fx, fy, sy0, { signSweeps: [0.9, 3.4], ovalSweeps: [4.4, T.logo], bubbles: P(t, 2.4, 3.0) });
+  // a placa oval vira a logo
+  const lp = P(t, T.logo + .05, T.logo + .75);
+  if (lp > 0 && IMG.logo) {
+    const ovalScreenW = FAC.ovalW * s, d0 = ovalScreenW / .87;
+    const sx = 540 + (FAC.oval[0] - fx) * s, sy = sy0 + (FAC.oval[1] - fy) * s + d0 * .06;
+    const e = eio(lp);
+    ctx.save(); ctx.globalAlpha = clamp(lp * 1.6) * .6; ctx.fillStyle = C.navy2; ctx.fillRect(0, 0, W, H); ctx.restore();
+    for (let k = 0; k < 2; k++) { const p = P(t, T.logo + .5 + k * .15, T.logo + 1.5 + k * .15); if (p > 0 && p < 1) ring(540, 1010, 300 + eo(p) * 380, `rgba(255,255,255,${.6 * (1 - p)})`, 10 * (1 - p) + 2); }
+    drawLogo(lerp(sx, 540, e), lerp(sy, 1010, e), lerp(d0, 620, e), clamp(lp * 3));
+  }
+}
+
+/* ---- 2. Quadro "Tem na GJ" sobre o interior da loja ---- */
 const PRODUCTS = [
-  { t: 8.98, title: 'Tilápia inteira', sub: 'pra assar', draw: drawWhole },
-  { t: 11.15, title: 'Filé', sub: 'pra fritar', draw: drawFillets },
-  { t: 12.35, title: 'Frutos do mar', sub: 'pra caprichar no almoço', draw: drawSeafood },
+  { t: 7.79, title: 'Tilápia inteira', sub: 'pra assar', draw: drawWhole, s: .27 },
+  { t: 9.96, title: 'Filé', sub: 'pra fritar', draw: drawFillets, s: .27 },
+  { t: 11.16, title: 'Frutos do mar', sub: 'pra caprichar no almoço', draw: drawSeafood, s: .26 },
 ];
+function sceneBoard(t) {
+  ctx.fillStyle = C.navy2; ctx.fillRect(0, 0, W, H);
+  // interior visto pela porta do meio
+  const p = P(t, T.prod - .1, T.sat);
+  ctx.save(); ctx.filter = 'blur(7px)'; facadeCover(t, lerp(3.2, 3.6, p), FAC.door[0], FAC.door[1] - 30); ctx.restore();
+  ctx.fillStyle = 'rgba(6,19,79,.55)'; ctx.fillRect(0, 0, W, H);
+  const cp = eback(P(t, T.prod, T.prod + .4));
+  ctx.save(); ctx.translate(540, 1060); ctx.scale(cp, cp); ctx.rotate((1 - clamp(cp)) * -.08);
+  shadow(50, 20, 'rgba(0,0,0,.45)'); fillRR(-450, -420, 900, 840, 40, '#fff'); noShadow();
+  fillRR(-450, -420, 900, 130, [40, 40, 0, 0], C.red);
+  txt('TEM NA', -150, -352, 54, '#fff', 900, 'right');
+  if (IMG.logo) { ctx.save(); ctx.beginPath(); ctx.arc(-70, -355, 52, 0, TAU); ctx.clip(); ctx.drawImage(IMG.logo, -124, -409, 108, 108 * IMG.logo.height / IMG.logo.width); ctx.restore(); }
+  txt('GJ TILÁPIAS', 0, -352, 54, '#fff', 900, 'left');
+  PRODUCTS.forEach((pr, i) => {
+    const rp = eback(P(t, pr.t - .1, pr.t + .3)); if (rp <= 0) return;
+    const y = -170 + i * 230, on = (i === 2 ? t < T.sat : t < PRODUCTS[i + 1].t) && t >= pr.t - .1;
+    ctx.save(); ctx.translate((1 - clamp(rp)) * 500, y); ctx.globalAlpha = clamp(rp * 1.5);
+    fillRR(-410, -100, 820, 200, 30, on ? '#FFF1F1' : '#F5F7FC'); if (on) strokeRR(-410, -100, 820, 200, 30, C.red, 4);
+    circle(-300, 0, 84, '#E9EEF8'); ctx.save(); ctx.translate(-300, 0); pr.draw(t, pr.s * 1.35); ctx.restore();
+    font(56, 900); txt(pr.title, -180, -28, pr.title.length > 13 ? 52 : 58, C.navy, 900, 'left');
+    txt(pr.sub, -180, 40, pr.sub.length > 12 ? 34 : 42, C.red, 800, 'left');
+    check(350, -60, 26, C.green, eback(P(t, pr.t + .25, pr.t + .55)));
+    ctx.restore();
+  });
+  ctx.restore();
+}
+
 function drawWhole(t, s) {
   ctx.save(); ctx.scale(s, s);
   fillRR(-260, -110, 520, 220, 40, '#C4CDDB'); fillRR(-240, -92, 480, 184, 32, '#E4E9F1');
@@ -243,6 +304,7 @@ function drawWhole(t, s) {
   steam(0, -80, .8, t, .7);
   ctx.restore();
 }
+
 function drawFillets(t, s) {
   ctx.save(); ctx.scale(s, s);
   // frigideira vista de cima
@@ -253,6 +315,7 @@ function drawFillets(t, s) {
   lemon(130, -120, 26);
   ctx.restore();
 }
+
 function drawSeafood(t, s) {
   ctx.save(); ctx.scale(s, s);
   circle(0, 0, 250, '#fff'); ring(0, 0, 250, '#D9E1EE', 10); circle(0, 0, 200, '#F4F7FC');
@@ -261,46 +324,14 @@ function drawSeafood(t, s) {
   lemon(150, -150, 24); leaf(-170, -20, 1.5, .9);
   ctx.restore();
 }
-function productCard(t, i, x, y, s) {
-  const pr = PRODUCTS[i];
-  ctx.save(); ctx.translate(x, y);
-  pr.draw(t, s);
-  ctx.restore();
-}
-function sceneProducts(t) {
-  oceanBG(t);
-  const cur = t < PRODUCTS[1].t ? 0 : (t < PRODUCTS[2].t ? 1 : 2);
-  // cartão principal (produto atual)
-  PRODUCTS.forEach((pr, i) => {
-    const inP = eback(P(t, pr.t - .12, pr.t + .3)), next = PRODUCTS[i + 1];
-    const outP = next ? eio(P(t, next.t - .12, next.t + .2)) : 0;
-    if (inP <= 0 || outP >= 1) return;
-    const x = lerp(1400, 540, clamp(inP)) - outP * 900, y = 1000;
-    ctx.save(); ctx.globalAlpha = clamp(inP * 2) * (1 - outP);
-    ctx.translate(x, y); ctx.rotate((1 - clamp(inP)) * .25);
-    productCard(t, i, 0, 0, lerp(.6, 1, clamp(inP)) * 1.25);
-    ctx.restore();
-    // título do produto
-    const ta = clamp(inP * 1.4) * (1 - outP);
-    ctx.save(); ctx.globalAlpha = ta; ctx.translate(lerp(900, 540, eo(clamp(inP))) - outP * 900, 1400);
-    font(78, 900); const tw = ctx.measureText(pr.title).width + 80;
-    shadow(24, 10, 'rgba(0,0,0,.3)'); fillRR(-tw / 2, -56, tw, 112, 56, C.red); noShadow(); txt(pr.title, 0, 4, 78, '#fff', 900);
-    txt(pr.sub, 0, 120, 52, '#fff', 800);
-    ctx.restore();
-  });
-  // contador
-  ctx.save(); ctx.globalAlpha = P(t, T.prod, T.prod + .3) * (1 - P(t, 14.75, 15.1));
-  for (let i = 0; i < 3; i++) circle(480 + i * 60, 1600, i === cur ? 14 : 9, i === cur ? '#fff' : 'rgba(255,255,255,.4)');
-  ctx.restore();
-}
 
 /* ---- 3. "E pra chegar é fácil." (satélite) ---- */
 const SAT_A_PIN = [362, 470], SAT_B_PIN = [310, 380];
 function sceneSatellite(t) {
   oceanBG(t);
   const a = P(t, T.sat, T.sat + .35);
-  const cx = 540, cy = 1020, cw = 900, ch = 1000;
-  const grow = eio(P(t, 16.9, T.map + .1));
+  const cx = 540, cy = 1085, cw = 900, ch = 860;
+  const grow = eio(P(t, T.map - .45, T.map + .1));
   const x = lerp(cx - cw / 2, 0, grow), y = lerp(cy - ch / 2, 0, grow), w = lerp(cw, W, grow), h = lerp(ch, H, grow), rad = lerp(40, 0, grow);
   ctx.save(); ctx.globalAlpha = a; ctx.translate(540, 1020); const sc = lerp(.85, 1, eback(a)); ctx.scale(sc, sc); ctx.translate(-540, -1020);
   shadow(40, 16, 'rgba(0,0,0,.4)'); fillRR(x - 10, y - 10, w + 20, h + 20, rad + 8, '#fff'); noShadow();
@@ -308,8 +339,8 @@ function sceneSatellite(t) {
   const p = P(t, T.sat, T.map + .1);
   const sA = lerp(1.7, 4.2, eio(clamp(p / .62)));
   imgCover(IMG.satA, sA, SAT_A_PIN[0], SAT_A_PIN[1] - 20 / sA, cx, cy);
-  const bA = P(t, 16.15, 16.55);
-  if (bA > 0) { const sB = lerp(1.7, 2.6, eio(P(t, 16.15, T.map + .1))); imgCover(IMG.satB, sB, SAT_B_PIN[0], SAT_B_PIN[1], cx, cy, bA); }
+  const bA = P(t, T.sat + .9, T.sat + 1.3);
+  if (bA > 0) { const sB = lerp(1.7, 2.6, eio(P(t, T.sat + .9, T.map + .1))); imgCover(IMG.satB, sB, SAT_B_PIN[0], SAT_B_PIN[1], cx, cy, bA); }
   ctx.restore();
   // pino
   font(20, 600); txt('Imagens: Google', x + w - 20, y + h - 24, 20, 'rgba(255,255,255,.9)', 600, 'right');
@@ -328,7 +359,7 @@ function pinIcon(x, y, col) {
 /* ---- 4. Mapa com o carro ---- */
 const ROUTE = [[170, 880], [858, 1117], [874, 1110], [890, 1082], [886, 1068], [795, 962]];
 const GJ = [781, 965], MERC = [853, 941];
-const ROUTE_T = [17.65, 21.15];
+const ROUTE_T = [16.45, 19.85];
 function routeLen() { let L = 0; for (let i = 0; i < ROUTE.length - 1; i++) L += Math.hypot(ROUTE[i + 1][0] - ROUTE[i][0], ROUTE[i + 1][1] - ROUTE[i][1]); return L; }
 const RL = routeLen();
 function routeAt(d) { // distância -> ponto e ângulo
@@ -390,12 +421,12 @@ function sceneMap(t) {
 
 /* ---- 5. Fachada ---- */
 function sceneFacade(t) {
-  const img = IMG.fachada; if (!img) return;
-  const p = P(t, T.fac, T.addr + .3);
-  const s = (H / img.height) * lerp(1.0, 1.12, eio(p));
-  imgCover(img, s, img.width / 2, lerp(img.height / 2, 760, eio(p)), 540, 960);
-  // seta apontando para a fachada
-  const ap = eback(P(t, T.fac + 1.6, T.fac + 2.0));
+  ctx.fillStyle = C.navy; ctx.fillRect(0, 0, W, H);
+  const p = eio(P(t, T.fac, T.addr + .3));
+  const z = lerp(1.3, 1.15, p), fx = 470, fy = 836, sy = 1117;
+  const s = facadeCover(t, z, fx, fy, sy);
+  facadeOverlays(t, s, fx, fy, sy, { signSweeps: [T.fac + 1.2], outline: win(t, 24.2, T.addr + .2, .4, .3), bubbles: 1 });
+  const ap = eback(P(t, 24.3, 24.7));
   if (ap > 0) { ctx.save(); ctx.globalAlpha = clamp(ap) * (1 - P(t, T.addr - .2, T.addr)); ctx.translate(540, 1390 + Math.sin(t * 6) * 10); ctx.scale(ap, ap);
     shadow(20, 8, 'rgba(0,0,0,.4)'); fillRR(-250, -50, 500, 100, 50, C.red); noShadow(); txt('Fachada azul', 0, 3, 50, '#fff', 900); ctx.restore(); }
 }
@@ -413,7 +444,7 @@ function sceneAddress(t) {
   shadow(36, 14, 'rgba(0,0,0,.4)'); fillRR(-450, -190, 900, 380, 40, '#fff'); noShadow();
   fillRR(-450, -190, 900, 22, [40, 40, 0, 0], C.red);
   ctx.save(); ctx.translate(-360, -80); ctx.scale(1.3, 1.3); pinIcon(0, 40, C.red); ctx.restore();
-  const l1 = eo(P(t, T.addr + .1, T.addr + .45)), l2 = eo(P(t, 29.95, 30.3)), l3 = eo(P(t, 31.35, 31.7));
+  const l1 = eo(P(t, T.addr + .1, T.addr + .45)), l2 = eo(P(t, 28.81, 29.15)), l3 = eo(P(t, 30.2, 30.55));
   ctx.globalAlpha = l1; txt('Rua Ana Facó, 85', -290, -90 + (1 - l1) * 20, 70, C.navy, 900, 'left');
   ctx.globalAlpha = l2; txt('Álvaro Weyne', -290, 10 + (1 - l2) * 20, 58, C.red, 900, 'left');
   ctx.globalAlpha = l3; txt('Fortaleza – CE', -290, 100 + (1 - l3) * 20, 50, C.navy, 800, 'left');
@@ -449,9 +480,9 @@ function sceneWhats(t) {
   if (m2 > 0) { ctx.save(); ctx.globalAlpha = m2; fillRR(-210, -40, 140, 70, 22, '#fff'); for (let i = 0; i < 3; i++) circle(-170 + i * 30, -5, 8 + 3 * Math.max(0, Math.sin(t * 8 - i)), C.gray); ctx.restore(); }
   ctx.restore();
   // número em destaque
-  const np = eback(P(t, 35.05, 35.45));
+  const np = eback(P(t, 33.89, 34.3));
   if (np > 0) {
-    const pulse = 1 + .03 * Math.sin((t - 35) * 6) * P(t, 35.5, 35.8);
+    const pulse = 1 + .03 * Math.sin((t - 34) * 6) * P(t, 34.3, 34.6);
     ctx.save(); ctx.translate(540, 1395); ctx.scale(np * pulse * .95, np * pulse * .95);
     shadow(30, 12, 'rgba(0,0,0,.45)'); fillRR(-470, -88, 940, 176, 88, C.green); noShadow();
     waIcon(-372, 0, 62, '#fff'); ctx.save(); ctx.translate(-372, 0); waIcon(0, 0, 54, C.green); ctx.restore();
@@ -481,26 +512,36 @@ function sceneEnd(t) {
 let showSafe = false;
 function drawSafeZones() { ctx.save(); ctx.fillStyle = 'rgba(255,0,80,.18)'; ctx.fillRect(0, 0, W, 220); ctx.fillRect(0, 1500, W, 420); ctx.fillRect(950, 900, 130, 600); ctx.restore(); }
 function cross(t, a, d) { return eio(P(t, a, a + d)); }
+function watermark(t) { // logo fixa no canto
+  const hide = Math.max(win(t, T.logo, T.prod + .2, .25, .35), P(t, T.end - .1, T.end + .25));
+  const a = P(t, .2, .6) * (1 - hide);
+  if (a <= 0) return;
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(970, 268); const pul = 1 + .02 * Math.sin(t * 2);
+  ctx.scale(pul, pul); shadow(16, 6, 'rgba(0,0,0,.35)'); circle(0, 0, 66, '#fff'); noShadow();
+  if (IMG.logo) ctx.drawImage(IMG.logo, -63, -63, 126, 126 * IMG.logo.height / IMG.logo.width);
+  ctx.restore();
+}
 function renderFrame(t) {
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.clearRect(0, 0, W, H);
-  if (t < T.prod + .3) sceneKitchen(t);
-  if (t >= T.prod - .05 && t < T.sat + .4) { ctx.save(); ctx.globalAlpha = cross(t, T.prod - .05, .35); sceneProducts(t); ctx.restore(); }
+  if (t < T.prod + .45) sceneStore(t);
+  if (t >= T.prod && t < T.sat + .4) { ctx.save(); ctx.globalAlpha = cross(t, T.prod, .45); sceneBoard(t); ctx.restore(); }
   if (t >= T.sat && t < T.map + .4) { ctx.save(); ctx.globalAlpha = cross(t, T.sat, .3); sceneSatellite(t); ctx.restore(); }
   if (t >= T.map + .05 && t < T.fac + .3) { ctx.save(); ctx.globalAlpha = cross(t, T.map + .05, .1); sceneMap(t); ctx.restore(); }
   if (t >= T.fac && t < T.addr + .45) { ctx.save(); ctx.globalAlpha = cross(t, T.fac, .15); sceneFacade(t); ctx.restore(); }
   if (t >= T.addr && t < T.wpp + .45) { ctx.save(); ctx.globalAlpha = cross(t, T.addr, .4); sceneAddress(t); ctx.restore(); }
   if (t >= T.wpp && t < T.end + .45) { ctx.save(); ctx.globalAlpha = cross(t, T.wpp, .4); sceneWhats(t); ctx.restore(); }
   if (t >= T.end) { ctx.save(); ctx.globalAlpha = cross(t, T.end, .4); sceneEnd(t); ctx.restore(); }
-  // textos sincronizados com a fala
-  headline(t, 0.1, 3.7, [[['Já sabe o que vai']], [['pra '], ['panela', C.red], [' hoje?']]]);
-  headline(t, 3.85, 6.55, [[['Bateu vontade']], [['de comer '], ['peixe?', C.red]]]);
-  headline(t, 6.6, 8.75, [[['Vem pra ']], [['GJ Tilápias!', C.red]]], { y: 400 });
-  headline(t, 15.3, 17.35, [[['Pra chegar']], [['é fácil!', C.red]]]);
-  headline(t, 17.6, 19.75, [[['Pela ']], [['Av. Francisco Sá', C.red]]]);
-  headline(t, 19.75, 21.7, [[['Entre na ']], [['Rua Ana Facó', C.red]]]);
-  headline(t, 21.75, 24.3, [[['Perto do Mercado']], [['do Carlito Pamplona', C.red]]]);
-  headline(t, 24.4, 27.85, [[['Você vai ver a']], [['fachada azul', C.blue], [' da GJ']]]);
-  headline(t, 32.9, 37.6, [[['Quer consultar']], [['o que tem '], ['hoje?', C.red]]]);
+  watermark(t);
+  const Y = 470;
+  headline(t, 0.08, 2.55, [[['Já sabe o que vai']], [['pra '], ['panela', C.red], [' hoje?']]], { y: Y });
+  headline(t, 2.6, 5.15, [[['Bateu vontade']], [['de comer '], ['peixe?', C.red]]], { y: Y });
+  headline(t, 5.2, 7.5, [[['Vem pra ']], [['GJ Tilápias!', C.red]]], { y: Y });
+  headline(t, 14.05, 16.05, [[['Pra chegar']], [['é fácil!', C.red]]], { y: Y });
+  headline(t, 16.3, 18.15, [[['Pela ']], [['Av. Francisco Sá', C.red]]], { y: Y });
+  headline(t, 18.15, 20.5, [[['Entre na ']], [['Rua Ana Facó', C.red]]], { y: Y });
+  headline(t, 20.5, 23.1, [[['Perto do Mercado']], [['do Carlito Pamplona', C.red]]], { y: Y });
+  headline(t, 23.15, 26.65, [[['Você vai ver a']], [['fachada azul', C.blue], [' da GJ']]], { y: Y });
+  headline(t, 31.65, 36.4, [[['Quer consultar']], [['o que tem '], ['hoje?', C.red]]], { y: Y });
   if (showSafe) drawSafeZones();
 }
 window.renderFrame = renderFrame; window.DUR = DUR; window.FPS = FPS;

@@ -6,7 +6,7 @@ import numpy as np, wave
 from scipy.signal import butter, sosfilt
 
 SR = 44100
-DUR = 41.0
+DUR = 40.0
 N = int(SR * (DUR + 0.5))
 rng = np.random.default_rng(7)
 BEAT = 0.5  # 120 BPM
@@ -109,7 +109,7 @@ def pad(ms, d, cut=1200, a=0.4):
 # ---------------- música (Ré maior, 116 BPM aprox. — compasso de 2 s) ----------------
 prog = [(50, [62, 66, 69, 74]), (45, [61, 64, 69, 73]), (47, [59, 62, 66, 71]), (43, [59, 62, 67, 71])]
 bar = 0; t0 = 0.0
-while t0 < 40.0:
+while t0 < 38.3:
     root, ch = prog[bar % 4]
     full = t0 >= 2.0
     add(music, pad([c - 12 for c in ch[:3]], 2.05, cut=1600, a=.2), t0, .12)
@@ -126,8 +126,8 @@ while t0 < 40.0:
         if k % 2 == 0 or full:
             add(music, pluck(ch[pat[k]] + 12, .16, cut=3200), t0 + k * .125, .07, pan=-.35 if k % 2 else .35)
     bar += 1; t0 += 2.0
-add(music, pad([50, 57, 62, 66, 69, 74], 1.8, cut=2600, a=.02), 39.3, .22)
-add(music, sine(73.4, 1.8) * env(int(SR * 1.8), .01, .9), 39.3, .25)
+add(music, pad([50, 57, 62, 66, 69, 74], 1.8, cut=2600, a=.02), 38.3, .22)
+add(music, sine(73.4, 1.8) * env(int(SR * 1.8), .01, .9), 38.3, .25)
 # ---------------- EFEITOS SONOROS ----------------
 
 def s_notif():
@@ -226,19 +226,18 @@ def s_engine(d):
     return x * e * .35
 
 E = []
-E += [(0.35, s_pop(700), .8)]
-E += [(3.5, s_whoosh(.5, 600, 6000, .45), 1), (3.95, s_sizzle(2.2), 1), (4.0, s_pop(300), 1)]
-E += [(6.55, s_impact(), .45), (6.6, s_chime(), 1)]
-E += [(8.85, s_whoosh(.5, 500, 5000, .4), 1)]
-for tk in (8.98, 11.15, 12.35): E += [(tk, s_pop(900), 1), (tk + .05, s_whoosh(.35, 1000, 7000, .25), 1)]
-E += [(15.15, s_whoosh(.6, 300, 4000, .4), 1)]
-E += [(17.2, s_whoosh(.5, 500, 6000, .45), 1)]
-E += [(17.6, s_engine(3.7), 1), (19.9, s_click(), .8)]
-E += [(21.15, s_notif(), .7), (21.85, s_blip(1300), 1)]
-E += [(24.1, s_whoosh(.5, 600, 6000, .4), 1)]
-E += [(27.85, s_whoosh(.5, 400, 5000, .4), 1), (28.1, s_pop(800), .8), (29.95, s_pop(900), .8), (31.35, s_pop(1000), .8)]
-E += [(32.75, s_whoosh(.5, 500, 6000, .4), 1), (33.25, s_notif(), .6), (35.05, s_pop(900), 1), (35.1, s_confirm(), .9)]
-E += [(37.6, s_whoosh(.6, 400, 6000, .4), 1), (37.75, s_chime(), 1)]
+E += [(0.9, s_whoosh(1.0, 1500, 8000, .18), 1), (3.4, s_whoosh(1.0, 1500, 8000, .18), 1)]   # brilho nos letreiros
+E += [(4.9, s_whoosh(.6, 400, 5000, .4), 1), (5.25, s_impact(), .4), (5.3, s_chime(), 1)]   # placa vira logo
+E += [(7.45, s_whoosh(.5, 500, 5000, .4), 1)]
+for tk in (7.79, 9.96, 11.16): E += [(tk - .05, s_whoosh(.35, 1000, 7000, .25), 1), (tk + .3, s_blip(1400), 1)]
+E += [(13.8, s_whoosh(.6, 300, 4000, .4), 1)]
+E += [(15.95, s_whoosh(.5, 500, 6000, .45), 1)]
+E += [(16.4, s_engine(3.6), 1), (18.6, s_click(), .8)]
+E += [(19.85, s_notif(), .7), (20.65, s_blip(1300), 1)]
+E += [(22.9, s_whoosh(.5, 600, 6000, .4), 1)]
+E += [(26.65, s_whoosh(.5, 400, 5000, .4), 1), (26.9, s_pop(800), .8), (28.81, s_pop(900), .8), (30.2, s_pop(1000), .8)]
+E += [(31.5, s_whoosh(.5, 500, 6000, .4), 1), (32.0, s_notif(), .6), (33.89, s_pop(900), 1), (33.95, s_confirm(), .9)]
+E += [(36.4, s_whoosh(.6, 400, 6000, .4), 1), (36.55, s_chime(), 1)]
 for t0, s, g in E: add(sfx, s, t0, g)
 
 # ---------------- locução + ducking ----------------
