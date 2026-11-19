@@ -39,3 +39,10 @@ centro de distribuição (Juazeiro). A quinta loja vem aí. Slogan: "Sua casa me
 | loja-interior-corredor.mov (7 s, 720×1280) | corredor com cadeiras, baldes, organização | variedade (loja a confirmar) |
 
 (Um 5º arquivo enviado era idêntico ao vídeo do "mundinho" de Juazeiro e foi descartado.)
+
+## Rascunho 1 (61 s)
+Arquivo local: `video/out/corba-rascunho-1.mp4` (e `-leve.mp4`). Por conter os vídeos com pessoas, o MP4 e os quadros
+extraídos ficam fora do git.
+Montagem: `video/extract.py` (trechos dos vídeos → quadros, definidos em `clips.json`), `video/cenarios.js` (cenários
+ilustrados: Iguatu, Juazeiro/Padre Cícero, Senador Pompeu/igreja, lojinha 2002, mapa do Ceará), `video/corba.js`
+(linha do tempo), `video/audio_corba.py` (trilha), `node render.js`.

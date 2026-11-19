@@ -23,7 +23,7 @@ function serve() {
   page.on('pageerror', e => console.error('[pageerror]', e.message));
   const pg = process.env.PAGE || 'index.html'; const srv = await serve(); await page.goto(`http://127.0.0.1:${srv.address().port}/video/${pg}?render=1`);
   await page.evaluate(() => window.ready);
-  const grab = t => page.evaluate(t => { window.renderFrame(t); return document.getElementById('c').toDataURL('image/png'); }, t);
+  const grab = t => page.evaluate(async t => { if (window.prepare) await window.prepare(t); window.renderFrame(t); return document.getElementById('c').toDataURL('image/png'); }, t);
 
   if (args[0] === '--stills') {
     fs.mkdirSync(path.join(__dirname, 'out/stills'), { recursive: true });

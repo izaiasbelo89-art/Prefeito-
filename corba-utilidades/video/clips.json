@@ -1,0 +1,90 @@
+[
+ {
+  "id": "intro",
+  "file": "iguatu-fachada-aereo.mov",
+  "t0": 0.0,
+  "t1": 5.7,
+  "src": 0.0,
+  "speed": 1.15
+ },
+ {
+  "id": "galpoes",
+  "file": "fabrica-galpoes-aereo.mov",
+  "t0": 7.55,
+  "t1": 9.0,
+  "src": 1.0,
+  "speed": 1.3
+ },
+ {
+  "id": "esteira",
+  "file": "fabrica-esteira-panelas.mov",
+  "t0": 8.9,
+  "t1": 10.8,
+  "src": 3.0,
+  "speed": 1.0
+ },
+ {
+  "id": "embalagem",
+  "file": "fabrica-embalagem.mov",
+  "t0": 14.0,
+  "t1": 20.1,
+  "src": 0.0,
+  "speed": 1.1
+ },
+ {
+  "id": "fachada",
+  "file": "iguatu-fachada-aereo.mov",
+  "t0": 19.9,
+  "t1": 23.8,
+  "src": 5.2,
+  "speed": 1.15
+ },
+ {
+  "id": "interior",
+  "file": "loja-interior-decoracao.mov",
+  "t0": 23.6,
+  "t1": 29.8,
+  "src": 0.0,
+  "speed": 1.35
+ },
+ {
+  "id": "corredor",
+  "file": "loja-interior-corredor.mov",
+  "t0": 29.6,
+  "t1": 33.9,
+  "src": 0.0,
+  "speed": 1.4
+ },
+ {
+  "id": "mundo",
+  "file": "juazeiro-mundo-avenida-loja.mov",
+  "t0": 35.3,
+  "t1": 39.0,
+  "src": 0.0,
+  "speed": 3.0
+ },
+ {
+  "id": "saopedro",
+  "file": "loja-fachada-a-identificar.mov",
+  "t0": 38.8,
+  "t1": 41.6,
+  "src": 0.5,
+  "speed": 1.3
+ },
+ {
+  "id": "cd",
+  "file": "galpao-aereo-a-identificar.mov",
+  "t0": 41.4,
+  "t1": 45.1,
+  "src": 2.0,
+  "speed": 2.0
+ },
+ {
+  "id": "pompeu",
+  "file": "senador-pompeu-letreiro-praca.mov",
+  "t0": 48.4,
+  "t1": 51.9,
+  "src": 3.8,
+  "speed": 1.55
+ }
+]
