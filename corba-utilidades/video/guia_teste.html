@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Guia</title></head><body style="margin:0">
+<canvas id="c" width="2160" height="1100"></canvas><script src="guia.js"></script><script>
+const c=document.getElementById('c').getContext('2d');
+window.renderFrame=t=>{c.fillStyle='#EAF4FC';c.fillRect(0,0,2160,1100);
+ const ps=[['convite','Convida'],['aponta','Aponta'],['apresenta','Apresenta'],['anda','Caminha'],['segura','Segura produto'],['toca','Toca no mapa'],['curioso','Curiosidade'],['parado','Parado']];
+ ps.forEach(([p,l],i)=>{const x=150+i*265,y=900; guia(c,x,y,.62,p,t,{walk:p==='anda'?t*9:null, mouth:p==='curioso'?'o':null, holdR:p==='segura'?(c2=>{c2.fillStyle='#9AA6B2';c2.beginPath();c2.roundRect(-10,-10,90,50,[4,4,16,16]);c2.fill();}):null});
+  c.fillStyle='#1B2F8F';c.font='700 34px Inter';c.textAlign='center';c.fillText(l,x,1000);});
+ c.fillStyle='#1B2F8F';c.font='900 52px Inter';c.textAlign='left';c.fillText('Guia da Corbã — poses',60,80);};
+window.ready=Promise.resolve();window.DUR=1;window.FPS=30;</script></body></html>
