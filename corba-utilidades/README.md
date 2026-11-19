@@ -33,3 +33,9 @@ centro de distribuição (Juazeiro). A quinta loja vem aí. Slogan: "Sua casa me
 | senador-pompeu-igreja-aereo.mov (20 s) | igreja matriz, aérea | Senador Pompeu |
 | galpao-aereo-a-identificar.mov (19 s) | galpão visto do alto | a confirmar (centro de distribuição?) |
 | loja-fachada-a-identificar.mov (7 s) | fachada de vidro de uma loja Corbã | a confirmar qual loja |
+| juazeiro-mundo-avenida-loja.mov (15 s, 720×1280) | efeito "mundinho" abrindo → avenida → loja Corbã | abertura de Juazeiro do Norte (Atacarejo?) |
+| iguatu-fachada-aereo.mov (10 s, 720×1280) | fachada da loja de Iguatu, aérea até a entrada | "A loja de Iguatu fica na Rua Santos Dumont" |
+| loja-interior-decoracao.mov (14 s, 720×1280) | interior: decoração, utensílios, organização | "Bora entrar?" / variedade (loja a confirmar) |
+| loja-interior-corredor.mov (7 s, 720×1280) | corredor com cadeiras, baldes, organização | variedade (loja a confirmar) |
+
+(Um 5º arquivo enviado era idêntico ao vídeo do "mundinho" de Juazeiro e foi descartado.)
