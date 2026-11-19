@@ -1,0 +1,58 @@
+{
+ "iguatu": {
+  "img": "rua_iguatu.png",
+  "z": 16,
+  "ox": 6556160,
+  "oy": 8684544,
+  "w": 1536,
+  "h": 2048
+ },
+ "atacarejo": {
+  "img": "rua_atacarejo.png",
+  "z": 16,
+  "ox": 6554368,
+  "oy": 8724480,
+  "w": 2304,
+  "h": 2304
+ },
+ "saopedro": {
+  "img": "rua_saopedro.png",
+  "z": 16,
+  "ox": 6555392,
+  "oy": 8724224,
+  "w": 1536,
+  "h": 2304
+ },
+ "pompeu": {
+  "img": "rua_pompeu.png",
+  "z": 16,
+  "ox": 6552832,
+  "oy": 8648448,
+  "w": 1536,
+  "h": 2048
+ },
+ "cidade_iguatu": {
+  "img": "cidade_iguatu.png",
+  "z": 13,
+  "ox": 818944,
+  "oy": 1084672,
+  "w": 1280,
+  "h": 2048
+ },
+ "cidade_juazeiro": {
+  "img": "cidade_juazeiro.png",
+  "z": 13,
+  "ox": 818688,
+  "oy": 1089536,
+  "w": 1536,
+  "h": 2304
+ },
+ "cidade_pompeu": {
+  "img": "cidade_pompeu.png",
+  "z": 13,
+  "ox": 818432,
+  "oy": 1080064,
+  "w": 1536,
+  "h": 2304
+ }
+}

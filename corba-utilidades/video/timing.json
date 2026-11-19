@@ -1,135 +1,156 @@
 [
  {
-  "o0": 0.03,
+  "o0": 0.07,
   "o1": 1.66,
-  "t0": 0.03,
-  "t1": 1.54,
+  "t0": 0.07,
+  "t1": 1.66,
   "txt": "Você já entrou numa loja Corbã?"
  },
  {
-  "o0": 2.51,
-  "o1": 6.4,
-  "t0": 1.78,
-  "t1": 5.38,
+  "o0": 2.58,
+  "o1": 6.49,
+  "t0": 2.58,
+  "t1": 6.49,
   "txt": "Vem comigo, porque essa história começou muito antes dessas portas se abrirem."
  },
  {
-  "o0": 6.92,
-  "o1": 12.49,
-  "t0": 5.62,
-  "t1": 10.54,
-  "txt": "Foi em Iguatu, no Ceará, que a Corbã começou na indústria, fabricando produtos em alumínio."
+  "o0": 7.07,
+  "o1": 13.89,
+  "t0": 7.07,
+  "t1": 13.89,
+  "txt": "Foi em Iguatu, no interior do Ceará, que a Corbã começou sua trajetória na indústria, fabricando produtos em alumínio."
  },
  {
-  "o0": 13.22,
-  "o1": 16.81,
-  "t0": 10.78,
-  "t1": 14.01,
-  "txt": "Em janeiro de dois mil e dois, abriu sua primeira loja de varejo."
+  "o0": 14.82,
+  "o1": 20.57,
+  "t0": 14.82,
+  "t1": 20.57,
+  "txt": "Em vinte e um de janeiro de dois mil e dois, deu um novo passo e abriu sua primeira loja de varejo."
  },
  {
-  "o0": 17.49,
-  "o1": 23.73,
-  "t0": 14.25,
-  "t1": 19.78,
-  "txt": "Hoje, reúne quatro lojas, fabricação própria, centro de distribuição e uma grande variedade para o lar."
+  "o0": 21.22,
+  "o1": 26.66,
+  "t0": 21.22,
+  "t1": 26.66,
+  "txt": "A experiência da fabricação passou a caminhar junto com o atendimento ao consumidor."
  },
  {
-  "o0": 24.41,
-  "o1": 27.49,
-  "t0": 20.02,
-  "t1": 22.82,
+  "o0": 26.91,
+  "o1": 33.23,
+  "t0": 26.91,
+  "t1": 33.23,
+  "txt": "Hoje, a Corbã reúne quatro lojas, fabricação própria, centro de distribuição e uma grande variedade para o lar."
+ },
+ {
+  "o0": 34.3,
+  "o1": 37.38,
+  "t0": 34.3,
+  "t1": 37.38,
   "txt": "A loja de Iguatu fica na Rua Santos Dumont, no Centro."
  },
  {
-  "o0": 28.04,
-  "o1": 28.53,
-  "t0": 23.06,
-  "t1": 23.52,
+  "o0": 37.88,
+  "o1": 38.4,
+  "t0": 37.88,
+  "t1": 38.4,
   "txt": "Bora entrar?"
  },
  {
-  "o0": 29.12,
-  "o1": 35.62,
-  "t0": 23.76,
-  "t1": 29.44,
-  "txt": "Tem panelas de fabricação própria, utensílios de cozinha, organização, decoração, cama, mesa e banho."
+  "o0": 39.03,
+  "o1": 46.02,
+  "t0": 39.03,
+  "t1": 46.02,
+  "txt": "Aqui tem panelas de fabricação própria, utensílios de cozinha, organização, decoração, cama, mesa e banho."
  },
  {
-  "o0": 36.58,
-  "o1": 40.81,
-  "t0": 29.69,
-  "t1": 33.6,
-  "txt": "Produtos nacionais e artigos que vêm da China também fazem parte dessa variedade."
+  "o0": 46.61,
+  "o1": 51.86,
+  "t0": 46.61,
+  "t1": 51.86,
+  "txt": "Uma variedade de produtos para cuidar da casa, organizar os ambientes e renovar cada espaço."
  },
  {
-  "o0": 41.59,
-  "o1": 43.66,
-  "t0": 33.84,
-  "t1": 35.76,
-  "txt": "Em Juazeiro do Norte, são duas lojas."
+  "o0": 53.05,
+  "o1": 54.88,
+  "t0": 53.05,
+  "t1": 54.88,
+  "txt": "Agora vamos pra Juazeiro do Norte."
  },
  {
-  "o0": 44.21,
-  "o1": 50.22,
-  "t0": 36.0,
-  "t1": 41.23,
-  "txt": "O Atacarejo, na Avenida Padre Cícero, no São José, e a unidade da Rua São Pedro, nos Salesianos."
+  "o0": 55.13,
+  "o1": 56.07,
+  "t0": 55.13,
+  "t1": 56.07,
+  "txt": "São duas lojas."
  },
  {
-  "o0": 50.93,
-  "o1": 54.47,
-  "t0": 41.47,
-  "t1": 44.75,
-  "txt": "A cidade também abriga o centro de distribuição que atende o atacado."
+  "o0": 56.62,
+  "o1": 62.06,
+  "t0": 56.62,
+  "t1": 62.06,
+  "txt": "O Atacarejo, inaugurado em dois mil e dezoito, fica na Avenida Padre Cícero, no São José."
  },
  {
-  "o0": 55.18,
-  "o1": 62.43,
-  "t0": 44.99,
-  "t1": 51.52,
+  "o0": 63.11,
+  "o1": 66.41,
+  "t0": 63.11,
+  "t1": 66.41,
+  "txt": "A outra unidade fica na Rua São Pedro, nos Salesianos."
+ },
+ {
+  "o0": 66.95,
+  "o1": 71.69,
+  "t0": 66.95,
+  "t1": 71.69,
+  "txt": "Juazeiro também abriga o centro de distribuição, que atende os lojistas do atacado."
+ },
+ {
+  "o0": 72.6,
+  "o1": 80.08,
+  "t0": 72.6,
+  "t1": 80.08,
   "txt": "Em agosto de dois mil e vinte e seis, Senador Pompeu recebeu a quarta loja, na Avenida Francisco França Cambraia, no Centro."
  },
  {
-  "o0": 62.97,
-  "o1": 64.14,
-  "t0": 51.76,
-  "t1": 52.84,
+  "o0": 80.71,
+  "o1": 81.83,
+  "t0": 80.71,
+  "t1": 81.83,
   "txt": "E essa história continua."
  },
  {
-  "o0": 64.63,
-  "o1": 65.88,
-  "t0": 53.08,
-  "t1": 54.24,
+  "o0": 82.64,
+  "o1": 83.93,
+  "t0": 82.64,
+  "t1": 83.93,
   "txt": "A quinta loja vem aí."
  },
  {
-  "o0": 66.72,
-  "o1": 67.08,
-  "t0": 54.48,
-  "t1": 54.81,
+  "o0": 84.54,
+  "o1": 84.84,
+  "t0": 84.54,
+  "t1": 84.84,
   "txt": "Onde?"
  },
  {
-  "o0": 67.71,
-  "o1": 68.9,
-  "t0": 55.06,
-  "t1": 56.16,
+  "o0": 85.43,
+  "o1": 86.47,
+  "t0": 85.43,
+  "t1": 86.47,
   "txt": "A gente conta em breve."
  },
  {
-  "o0": 69.38,
-  "o1": 70.64,
-  "t0": 56.4,
-  "t1": 57.56,
+  "o0": 86.97,
+  "o1": 88.25,
+  "t0": 86.97,
+  "t1": 88.25,
   "txt": "Corbã Utilidades."
  },
  {
-  "o0": 70.85,
-  "o1": 72.35,
-  "t0": 57.68,
-  "t1": 59.06,
+  "o0": 88.49,
+  "o1": 89.93,
+  "t0": 88.49,
+  "t1": 89.93,
   "txt": "Sua casa merece Corbã."
  }
 ]

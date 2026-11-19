@@ -4,7 +4,7 @@ txt = open('texto.txt').read().replace('\n', ' ')
 sents = [c.strip() for c in re.findall(r'[^.?!]+[.?!]', txt)]
 syl = lambda s: len(re.findall(r'[aeiouáéíóúâêôãõà]+', s.lower().replace('qu', 'q').replace('gu', 'g')))
 S = np.array([syl(c) for c in sents], float)
-w = wave.open('../audio/locucao-original-recortada.wav'); x = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float) / 32768; sr = w.getframerate()
+w = wave.open('../audio/locucao-final.wav'); x = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float) / 32768; sr = w.getframerate()
 h = int(.01 * sr); db = np.array([20 * np.log10(np.sqrt(np.mean(x[i:i + h] ** 2)) + 1e-9) for i in range(0, len(x) - h, h)])
 voiced = db >= -40
 cum = np.concatenate([[0], np.cumsum(voiced)]) * .01
@@ -35,7 +35,7 @@ for g in range(n - 2, m):
 idx = [0] * (n - 1); idx[-1] = bg
 for k in range(n - 2, 0, -1): idx[k - 1] = back[k][idx[k]]
 t0s = [start] + [gaps[g][1] for g in idx]; t1s = [gaps[g][0] for g in idx] + [end]
-W = json.load(open('warp.json'))
+W = [[0, 0], [1000, 1000]]
 def fw(t):
     for (o0, n0), (o1, n1) in zip(W, W[1:]):
         if t <= o1: return n0 + (t - o0) * (n1 - n0) / (o1 - o0) if o1 > o0 else n0

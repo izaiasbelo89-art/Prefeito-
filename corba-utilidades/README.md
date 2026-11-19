@@ -46,3 +46,12 @@ extraídos ficam fora do git.
 Montagem: `video/extract.py` (trechos dos vídeos → quadros, definidos em `clips.json`), `video/cenarios.js` (cenários
 ilustrados: Iguatu, Juazeiro/Padre Cícero, Senador Pompeu/igreja, lojinha 2002, mapa do Ceará), `video/corba.js`
 (linha do tempo), `video/audio_corba.py` (trilha), `node render.js`.
+
+## Versão 2 (com o guia) — 92 s
+Narração: `audio/locucao-final.wav` (90 s, ritmo natural, só corte + limpeza de som). Texto em `video/texto.txt`,
+frases em `video/timing.json`, palavras em `video/words.json`, legendas em `video/legendas.json` (`align.py`, `palavras.py`).
+Mapas reais (OpenStreetMap): `mapas/rotas.py` (rotas de carro OSRM) e `mapas/tiles.py` (mapas de ruas z16 e cidades z13).
+Pontos de saída: Rodoviária de Iguatu; Basílica de N. Sra. das Dores (Juazeiro); Centro de Senador Pompeu.
+Destinos: Iguatu pela coordenada do guia comercial; Atacarejo, Salesianos e Senador Pompeu **aproximados** (ruas certas,
+número da entrada a confirmar). Montagem: `video/index2.html` + `video/corba2.js` + `guia.js` + `cenarios.js`; trilha `video/audio_corba2.py`.
+Vídeo local (fora do git): `video/out/corba-v2.mp4` e `corba-v2-leve.mp4`.
