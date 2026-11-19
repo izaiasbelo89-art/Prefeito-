@@ -94,7 +94,7 @@ function badge(t, a, b, label, x, y, bg = C.red, size = 50) {
   ctx.save(); ctx.globalAlpha = al; ctx.translate(x, y); ctx.scale(p, p); font(size, 900); const w = ctx.measureText(label).width + 80;
   shadow(24, 10); fillRR(-w / 2, -size * .95, w, size * 1.9, size * .95, bg); noShadow(); txt(label, 0, 3, size, '#fff', 900); ctx.restore();
 }
-function watermark(t) { const a = P(t, .3, .7) * (1 - P(t, 86.6, 87.0)); if (a > 0) { ctx.save(); ctx.globalAlpha = a; drawLogo(968, 268, 130); ctx.restore(); } }
+function watermark(t) { const a = P(t, 2.28, 2.4) * (1 - P(t, 86.6, 87.0)); if (a > 0) { ctx.save(); ctx.globalAlpha = a; drawLogo(968, 268, 130); ctx.restore(); } }
 
 /* ---------- produtos (ilustrações fiéis à categoria; trocar por fotos de catálogo quando houver) ---------- */
 function panela(s) {
@@ -269,10 +269,8 @@ function mapScene(t, cfg) {
   ctx.restore();
   // Poker Moon em coordenadas de tela (tamanho constante)
   if (t >= cfg.ta - .3) {
-    const face = routeFace(R, p * R.L, R.dest[0] >= R.pts[0][0] ? 1 : -1);
-    const side = eio(P(t, cfg.tb + .05, cfg.tb + .55));
-    const sx = 540 + (carx - camx) * s - side * 170 * face, sy = 960 + (cary - camy) * s;
-    pokerMoon(sx, sy, 300, face, t, t > cfg.ta && t < cfg.tb + .1, P(t, cfg.ta - .3, cfg.ta));
+    const sx = 540 + (carx - camx) * s, sy = 960 + (cary - camy) * s;
+    ctx.save(); ctx.globalAlpha *= P(t, cfg.ta - .3, cfg.ta); carTop(sx, sy, ang, 1.5); ctx.restore();
   }
   // rótulos em tela
   ctx.restore();
@@ -291,7 +289,7 @@ function cearaLink(t, from, to, ta, tb, o = {}) {
   const A = mp(CITIES[from]), B = mp(CITIES[to]); const p = eio(P(t, ta, tb));
   ['iguatu', 'juazeiro', 'pompeu'].forEach(k => { if (o.show && !o.show.includes(k)) return; const [x, y] = mp(CITIES[k]); pinIcon(x, y, k === to ? C.red : C.blue, k === to ? .95 : .7); });
   ctx.save(); ctx.setLineDash([4, 16]); ctx.lineCap = 'round'; ctx.strokeStyle = C.navy; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(...A); ctx.lineTo(lerp(A[0], B[0], p), lerp(A[1], B[1], p)); ctx.stroke(); ctx.restore();
-  pokerMoon(lerp(A[0], B[0], p), lerp(A[1], B[1], p) + 10, 210, B[0] >= A[0] ? 1 : -1, t, p > 0 && p < 1);
+  truck(lerp(A[0], B[0], p) + 60, lerp(A[1], B[1], p), .8, 0, B[0] < A[0]);
   const lb = o.label; if (lb) { const [x, y] = B; const la = P(t, tb - .1, tb + .2); if (la > 0) { ctx.save(); ctx.globalAlpha = la; font(36, 900); const w = ctx.measureText(lb).width + 40; shadow(12, 4); fillRR(x + 40, y - 74, w, 60, 30, C.navy); noShadow(); txt(lb, x + 60, y - 43, 36, '#fff', 900, 'left'); ctx.restore(); } }
 }
 function touchRipple(t, at, x, y) { const p = P(t, at, at + .6); if (p > 0 && p < 1) { ring(x, y, 20 + p * 90, `rgba(63,162,232,${1 - p})`, 8); circle(x, y, 14 * (1 - p), 'rgba(63,162,232,.8)'); } }
@@ -304,7 +302,7 @@ const GK = [
   [9.7, 170, 1500, .48, 'parado', 1], [10.0, 150, 1500, .4, 'parado', 1], [12.1, 150, 1500, .4, 'aponta', 1], [14.6, 150, 1500, .4, 'aponta', 1],
   [14.75, 850, 1520, .6, 'parado', -1], [15.6, 850, 1520, .6, 'apresenta', -1], [18.3, 850, 1520, .6, 'aponta', -1], [20.6, 850, 1520, .6, 'aponta', -1],
   [20.8, 130, 1500, .4, 'parado', 1], [21.6, 130, 1500, .4, 'aponta', 1], [26.5, 130, 1500, .4, 'parado', 1],
-  [26.7, 540, 1490, .52, 'parado', 1], [27.4, 540, 1490, .52, 'apresenta', 1], [33.5, 540, 1490, .52, 'apresenta', 1],
+  [26.7, 910, 1580, .42, 'parado', -1], [27.4, 910, 1580, .42, 'apresenta', -1], [33.5, 910, 1580, .42, 'apresenta', -1],
   [33.7, 140, 1500, .42, 'parado', 1], [35.6, 140, 1500, .42, 'parado', 1],
   [35.8, 210, 1480, .55, 'parado', 1], [36.1, 210, 1480, .55, 'aponta', 1], [37.75, 210, 1480, .55, 'parado', 1], [37.9, 210, 1480, .55, 'anda', 1], [38.95, 560, 1180, .3, 'anda', 1],
   [39.0, 200, 1480, .5, 'parado', 1], [39.55, 200, 1480, .5, 'segura', 1], [41.4, 200, 1480, .5, 'apresenta', 1], [45.9, 200, 1480, .5, 'apresenta', 1],
@@ -312,7 +310,7 @@ const GK = [
   [54.85, 850, 1660, .55, 'parado', -1], [55.2, 850, 1660, .55, 'apresenta', -1], [56.5, 850, 1660, .55, 'apresenta', -1],
   [56.65, 140, 1500, .42, 'parado', 1], [59.4, 140, 1500, .42, 'parado', 1],
   [63.1, 140, 1500, .42, 'parado', 1], [64.6, 140, 1500, .42, 'parado', 1], [64.75, 150, 1500, .42, 'aponta', 1], [67.0, 150, 1500, .42, 'aponta', 1],
-  [67.1, -120, 1500, .42, 'anda', 1], [72.3, 900, 1500, .42, 'anda', 1],
+  [67.1, -120, 1560, .45, 'anda', 1], [72.3, 760, 1560, .45, 'anda', 1],
   [72.45, 170, 1500, .5, 'parado', 1], [72.6, 170, 1500, .5, 'toca', 1], [74.2, 170, 1500, .5, 'parado', 1],
   [74.45, 860, 1650, .55, 'parado', -1], [74.7, 860, 1650, .55, 'apresenta', -1], [75.8, 860, 1650, .55, 'apresenta', -1],
   [75.9, 140, 1500, .42, 'parado', 1], [77.3, 140, 1500, .42, 'parado', 1], [77.45, 150, 1500, .42, 'aponta', 1], [80.6, 150, 1500, .42, 'aponta', 1],
@@ -348,9 +346,11 @@ function scene(t) {
   ctx.fillStyle = C.navy2; ctx.fillRect(0, 0, W, H);
   // 1. Fachada real + convite (0–6,9)
   if (t < 7.0) { clipFull('intro', t, lerp(1, 1.08, P(t, 0, 6.9))); const g = ctx.createLinearGradient(0, 1100, 0, 1920); g.addColorStop(0, 'rgba(14,26,92,0)'); g.addColorStop(1, 'rgba(14,26,92,.55)'); ctx.fillStyle = g; ctx.fillRect(0, 1100, W, 820); }
-  // "antes dessas portas se abrirem" → íris a partir da mão do guia para o mapa
-  const hand = [220 + 150, 1480 - 300];
-  if (t >= 5.9 && t < 9.9) irisIn(t, 5.9, 6.8, hand[0], hand[1], () => sceneCearaIguatu(t));
+  if (t < 7.0) openingFX(t);
+  // "antes dessas portas se abrirem": portas da Corbã fecham e se abrem revelando o mapa
+  const DA = WT('abrirem.') - .15;
+  if (t >= DA && t < 9.9) sceneCearaIguatu(t);
+  if (t >= 4.85 && t < DA + .9) doors(t, 4.85, DA);
   // 2. Fábrica
   if (t >= 9.8 && t < 12.1) irisIn(t, 9.8, 10.4, 540, 1000, () => clipFull('galpoes', t, lerp(1.0, 1.12, P(t, 9.8, 12))));
   if (t >= 11.8 && t < 14.9) { const c = clipIn('esteira', t, .15, .3); ctx.save(); ctx.globalAlpha = c; clipFull('esteira', t, lerp(1.15, 1, P(t, 11.8, 14.8))); ctx.restore(); }
@@ -375,7 +375,7 @@ function scene(t) {
   if (t >= 56.6 && t < 59.8) { ctx.save(); ctx.globalAlpha = P(t, 56.6, 56.9) * (1 - P(t, 59.5, 59.8)); mapScene(t, { key: 'atacarejo', city: 'cidade_juazeiro', t0: 56.6, ta: 57.0, tb: 58.5, t1: 59.8, label: 'Corbã Atacarejo', sub: 'Desde 2018', origin: 'Basílica de N. Sra. das Dores' }); ctx.restore(); }
   if (t >= 59.5 && t < 63.25) { clipFull('mundo', t, 1, clipIn('mundo', t, .3, .25)); addressCard(t, WT('Padre') - .45, 63.0, 'Av. Padre Cícero, 4370A', 'São José', 'Juazeiro do Norte – CE'); }
   if (t >= 63.0 && t < 67.3) { ctx.save(); ctx.globalAlpha = P(t, 63.0, 63.25) * (1 - P(t, 67.05, 67.3)); mapScene(t, { key: 'saopedro', city: 'cidade_juazeiro', t0: 63.0, ta: 63.25, tb: 64.3, t1: 67.3, labelEnd: 65.0, label: 'Corbã Salesianos', origin: 'Basílica de N. Sra. das Dores' }); addressCard(t, 64.9, 67.1, 'Rua São Pedro, 1227', 'Salesianos', 'Juazeiro do Norte – CE'); ctx.restore(); }
-  if (t >= 67.0 && t < 72.6) { clipFull('cd', t, 1, clipIn('cd', t, .3, .3)); sceneCD(t); }
+  if (t >= 67.0 && t < 72.6) { ctx.save(); ctx.globalAlpha = P(t, 67.0, 67.3) * (1 - P(t, 72.3, 72.6)); cdScene(t, 67.2, 1); sceneCD(t); ctx.restore(); }
   // 10. Senador Pompeu
   if (t >= 72.4 && t < 74.7) { ctx.save(); ctx.globalAlpha = P(t, 72.4, 72.7) * (1 - P(t, 74.45, 74.7)); cearaLink(t, 'juazeiro', 'pompeu', 72.8, 74.2, { label: 'Senador Pompeu' }); touchRipple(t, 72.6, 170 + 105, 1500 - 270);
     badge(t, WT('agosto') - .1, 74.6, 'Agosto de 2026', 540, 1420, C.red, 50); ctx.restore(); }
@@ -387,6 +387,45 @@ function scene(t) {
   // 12. Assinatura
   if (t >= 86.6) { ctx.save(); ctx.globalAlpha = P(t, 86.6, 86.95); sceneFim(t); ctx.restore(); }
 }
+function sparkle(x, y, r, a) { if (a <= 0) return; ctx.save(); ctx.globalAlpha *= a; ctx.translate(x, y); ctx.fillStyle = '#fff'; ctx.beginPath();
+  for (let i = 0; i < 8; i++) { const rr2 = i % 2 ? r * .22 : r; const ang = i / 8 * TAU; ctx.lineTo(Math.cos(ang) * rr2, Math.sin(ang) * rr2); } ctx.closePath(); ctx.fill(); ctx.restore(); }
+function openingFX(t) {
+  // moldura nas cores da marca desenhando-se em volta
+  const fp = eio(P(t, .15, 1.1)), per = 2 * (W - 60 + H - 60);
+  ctx.save(); ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.setLineDash([per * fp, per]);
+  ctx.strokeStyle = C.red; rr(30, 30, W - 60, H - 60, 44); ctx.stroke(); ctx.lineDashOffset = -per / 2; ctx.strokeStyle = C.blue; ctx.stroke(); ctx.restore();
+  // brilhos sobre a fachada
+  for (let i = 0; i < 9; i++) { const ph = (t * .8 + rnd2(i)) % 1; sparkle(120 + rnd2(i + 3) * 840, 640 + rnd2(i + 7) * 420, 18 + rnd2(i + 1) * 16, Math.sin(ph * Math.PI) * P(t, .6, 1.2) * (1 - P(t, 4.6, 5.0))); }
+  // logo entra quicando e vai para o canto
+  const lp = eback(P(t, .15, .7)), mv = eio(P(t, 1.8, 2.35));
+  if (lp > 0 && t < 2.4) { const x = lerp(540, 968, mv), y = lerp(760, 268, mv), d = lerp(380, 130, mv) * Math.min(1.15, lp);
+    if (mv < .05) for (let k = 0; k < 2; k++) { const p = P(t, .3 + k * .15, 1.3 + k * .15); if (p > 0 && p < 1) ring(540, 760, 200 + eo(p) * 320, `rgba(255,255,255,${.8 * (1 - p)})`, 10 * (1 - p) + 2); }
+    ctx.save(); ctx.translate(x, y); ctx.rotate((1 - clamp(lp)) * -.5); drawLogo(0, 0, d, 1); ctx.restore(); }
+  // balão do guia
+  const bp = eback(P(t, WT('Vem') - .05, WT('Vem') + .3)) * (1 - P(t, 4.5, 4.8));
+  if (bp > 0) { ctx.save(); ctx.translate(430, 1060); ctx.scale(bp, bp); shadow(18, 6); fillRR(-170, -60, 340, 120, 40, '#fff');
+    ctx.beginPath(); ctx.moveTo(-120, 55); ctx.lineTo(-170, 110); ctx.lineTo(-70, 55); ctx.fill(); noShadow(); txt('Vem comigo!', 0, 2, 46, C.red, 900); ctx.restore(); }
+}
+function rnd2(i) { const x = Math.sin(i * 91.7 + 13.1) * 43758.5453; return x - Math.floor(x); }
+function doors(t, a, open) {
+  const close = eio(P(t, a, a + .55)), op = eio(P(t, open, open + .8));
+  const k = close * (1 - op); if (k <= 0) return;
+  for (const side of [-1, 1]) {
+    const w = W / 2, x0 = side < 0 ? -w + w * k : W - w * k;
+    ctx.save(); ctx.beginPath(); ctx.rect(x0, 0, w, H); ctx.clip();
+    const g = ctx.createLinearGradient(x0, 0, x0 + w, 0); g.addColorStop(0, 'rgba(160,205,240,.96)'); g.addColorStop(.5, 'rgba(215,236,252,.97)'); g.addColorStop(1, 'rgba(150,198,236,.96)');
+    ctx.fillStyle = g; ctx.fillRect(x0, 0, w, H);
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 26; ctx.strokeRect(x0 + 13, 13, w - 26, H - 26);
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.moveTo(x0 + 80, 200); ctx.lineTo(x0 + 200, 200); ctx.lineTo(x0 + 60, 900); ctx.lineTo(x0 + 0, 900); ctx.fill();
+    fillRR(side < 0 ? x0 + w - 70 : x0 + 40, 820, 30, 280, 15, '#C9D3DD');
+    // logo dividida entre as duas folhas
+    if (IMG.logo) { const d = 520, lx = x0 + (side < 0 ? w : 0); ctx.drawImage(IMG.logo, lx - d / 2, 560, d, d); }
+    fillRR(x0, 1580, w, 60, 0, side < 0 ? C.red : C.blue);
+    ctx.restore();
+  }
+  line2(W / 2 - (1 - k) * W / 2, 0, W / 2 - (1 - k) * W / 2, H);
+}
+function line2() {}
 function sceneCearaIguatu(t) {
   // mapa do estado aproxima em Iguatu; depois mapa real da cidade com a fábrica
   const z = eio(P(t, 6.3, 8.6));
@@ -427,24 +466,46 @@ function sceneExperiencia(t) {
   if (p > 0 && p < 1) { const x = lerp(820, 820, p) + Math.sin(p * Math.PI) * 120, y = lerp(830, 1150, p); ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(p * Math.PI) * .3); ctx.scale(.42, .42); panela(1); ctx.restore(); }
   if (p >= 1) { const q = eback(P(t, WT('caminhar') + 1.0, WT('caminhar') + 1.4)); ctx.save(); ctx.translate(820, 1150); ctx.scale(.42 * q, .42 * q); panela(1); ctx.restore(); }
 }
+function cdScene(t, t0, big = 1) {
+  // centro de distribuição ilustrado (galpão + caminhões + caixas)
+  const g = ctx.createLinearGradient(0, 0, 0, 1300); g.addColorStop(0, '#6DB9F0'); g.addColorStop(1, '#D9EEFB'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  if (big) { ctx.save(); ctx.globalAlpha = .35; padreCicero(860, 980, .55, t); ctx.restore(); }
+  hills(1000, 50, K.serra1, 3, t * 5);
+  ctx.fillStyle = '#CFC8B8'; ctx.fillRect(0, 1180, W, 740); ctx.fillStyle = '#B8B0A0'; ctx.fillRect(0, 1380, W, 120);
+  for (let x = ((t * 400) % 160) - 160; x < W; x += 160) fillRR(x, 1436, 80, 10, 5, '#fff');
+  // galpão
+  ctx.fillStyle = '#E9EEF4'; ctx.fillRect(110, 820, 860, 380); ctx.fillStyle = '#9AA9BA'; ctx.beginPath(); ctx.moveTo(80, 830); ctx.lineTo(540, 690); ctx.lineTo(1000, 830); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 4; for (let i = 0; i < 12; i++) { ctx.beginPath(); ctx.moveTo(120 + i * 72, 828 - Math.min(i, 12 - i) * 12); ctx.lineTo(120 + i * 72, 830); ctx.stroke(); }
+  fillRR(250, 870, 580, 90, 16, '#fff'); if (IMG.logo) ctx.drawImage(IMG.logo, 262, 876, 78, 78); txt('CENTRO DE DISTRIBUIÇÃO', 595, 916, 30, C.navy, 900);
+  for (let i = 0; i < 3; i++) { const dx = 170 + i * 260; fillRR(dx, 1000, 210, 200, 6, '#5F6E80'); for (let k = 0; k < 6; k++) fillRR(dx, 1000 + k * 33, 210, 4, 0, 'rgba(255,255,255,.18)'); }
+  // caixas sendo empilhadas
+  for (let i = 0; i < 6; i++) { const p = eback(P(t, t0 + .2 + i * .18, t0 + .5 + i * .18)); if (p <= 0) continue; const bx = 190 + (i % 3) * 64, by = 1200 - Math.floor(i / 3) * 56 - (1 - clamp(p)) * 200;
+    fillRR(bx, by - 54, 60, 54, 4, '#D6A866'); fillRR(bx, by - 30, 60, 8, 0, '#B9874A'); }
+  // caminhões: um chega, outro sai
+  const p1 = eio(P(t, t0, t0 + 1.6)), p2 = P(t, t0 + .6, t0 + 4.5);
+  truck(lerp(-260, 560, p1), 1330, 2.4, 0); truck(lerp(700, 1500, eo(p2)), 1450, 2.4, 0);
+}
 function sceneHoje(t) {
-  clipFull('embalagem', t, 1.05); ctx.save(); ctx.filter = 'blur(2px)'; ctx.restore(); darken(.55);
-  const items = [
-    { w: 'quatro', x: 290, y: 690, draw: (k, tt) => { for (let i = 0; i < 4; i++) { const pp = eback(P(t, tt + i * .15, tt + i * .15 + .3)); if (pp <= 0) continue; ctx.save(); ctx.translate(-75 + i * 50, 10); ctx.scale(pp, pp); fillRR(-20, -40, 40, 50, 4, '#fff'); fillRR(-24, -50, 48, 12, 3, C.red); ctx.restore(); } }, big: String(Math.min(4, Math.max(1, Math.floor(P(t, WT('quatro', 26), WT('quatro', 26) + .6) * 4) + 1))), lab: 'lojas' },
-    { w: 'fabricação', x: 790, y: 690, draw: (k, tt) => { ctx.save(); ctx.rotate(t * 2); for (let i = 0; i < 8; i++) { ctx.rotate(TAU / 8); fillRR(-10, -58, 20, 22, 4, '#fff'); } circle(0, 0, 42, '#fff'); circle(0, 0, 18, C.blue); ctx.restore(); }, big: '', lab: 'Fabricação própria' },
-    { w: 'centro', x: 290, y: 1010, draw: (k, tt) => { const p = P(t, tt, tt + 1.4); ctx.save(); ctx.scale(.55, .55); truck(lerp(-140, 10, eo(p)), 30, 1, 0); ctx.restore(); }, big: '', lab: 'Centro de distribuição' },
-    { w: 'variedade', x: 790, y: 1010, draw: (k, tt) => { const e = ['#E2231A', '#3FA2E8', '#F4B63F', '#1FAF5A']; e.forEach((c, i) => { const pp = eback(P(t, tt + i * .12, tt + i * .12 + .35)); if (pp <= 0) return; ctx.save(); ctx.translate(Math.cos(i * 1.6) * 44, Math.sin(i * 1.6) * 30 - 6); ctx.scale(pp, pp); fillRR(-20, -20, 40, 40, 10, c); ctx.restore(); }); }, big: '', lab: 'Variedade para o lar' },
+  const T1 = WT('quatro', 26) - .1, T2 = WT('fabricação', 26) - .1, T3 = WT('centro', 26) - .1, T4 = WT('variedade', 26) - .1;
+  const beats = [
+    [26.6, () => { clipFull('embalagem', t, 1.05); darken(.5); const lp = eback(P(t, 26.85, 27.35)); ctx.save(); ctx.translate(540, 960); ctx.scale(lp, lp); drawLogo(0, 0, 420, 1); ctx.restore();
+      for (let k = 0; k < 2; k++) { const p = P(t, 26.9 + k * .15, 27.9 + k * .15); if (p > 0 && p < 1) ring(540, 960, 230 + eo(p) * 300, `rgba(255,255,255,${.7 * (1 - p)})`, 10 * (1 - p) + 2); } }],
+    [T1, () => { const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, C.blue); g.addColorStop(1, C.navy); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      for (let i = 0; i < 4; i++) { const p = eback(P(t, T1 + .05 + i * .13, T1 + .4 + i * .13)); if (p <= 0) continue; ctx.save(); ctx.translate(150 + i * 260, 1060 - (1 - clamp(p)) * 600); ctx.scale(.44 * p, .44 * p); lojinha2002(0, 0, 1, 1); ctx.restore(); }
+      const n = Math.min(4, Math.floor(P(t, T1 + .05, T1 + .6) * 4) + 1); const np = eback(P(t, T1, T1 + .3));
+      ctx.save(); ctx.translate(540, 1300); ctx.scale(np, np); txt(String(n), -110, 0, 200, '#fff', 900); txt('lojas', 90, 20, 90, '#fff', 900); ctx.restore(); }],
+    [T2, () => { clipFull('robos', t, 1.1); darken(.25); ctx.save(); ctx.translate(820, 760); ctx.rotate(t * 1.5); ctx.globalAlpha = .9;
+      for (let i = 0; i < 10; i++) { ctx.rotate(TAU / 10); fillRR(-18, -150, 36, 40, 6, '#fff'); } ring(0, 0, 105, '#fff', 30); ctx.restore();
+      badge(t, T2 + .05, T3 + .2, 'Fabricação própria', 540, 1260, C.red, 54); }],
+    [T3, () => { cdScene(t, T3, 0); badge(t, T3 + .05, T4 + .2, 'Centro de distribuição', 540, 600, C.navy, 50); }],
+    [T4, () => { clipFull('variedade', t, 1.05); darken(.2);
+      const items = [(c) => panela(1), (c) => vaso(1, 99, 0), (c) => toalhas(1, 99, 0), (c) => caixas(1, 99, 0), (c) => portaUtensilios(1, 99, 0)];
+      items.forEach((fn, i) => { const p = eo(P(t, T4 + .05 + i * .1, T4 + .9 + i * .1)); if (p <= 0) return; const ang = -Math.PI / 2 + (i - 2) * .55, d = p * 520;
+        ctx.save(); ctx.translate(540 + Math.cos(ang) * d, 1150 + Math.sin(ang) * d * .9); ctx.rotate((i - 2) * .15 * p); ctx.scale(.42 * Math.min(1, p * 1.6), .42 * Math.min(1, p * 1.6)); fn(); ctx.restore(); });
+      badge(t, T4 + .05, 33.9, 'Variedade para o lar', 540, 1300, C.red, 54); }],
   ];
-  items.forEach(it => {
-    const tt = WT(it.w, 26) - .05; const p = eback(P(t, tt, tt + .45)); if (p <= 0) return;
-    ctx.save(); ctx.translate(it.x, it.y); ctx.scale(p, p);
-    shadow(30, 12, 'rgba(0,0,0,.4)'); circle(0, 0, 150, '#fff'); noShadow(); circle(0, -30, 92, it.w === 'quatro' || it.w === 'centro' ? C.red : C.blue);
-    ctx.save(); ctx.translate(0, -30); it.draw(p, tt); ctx.restore();
-    if (it.big) txt(it.big, 0, 82, 54, C.navy, 900);
-    font(30, 900); const words = it.lab.split(' '); const l1 = it.big ? it.lab : words.slice(0, Math.ceil(words.length / 2)).join(' '), l2 = it.big ? '' : words.slice(Math.ceil(words.length / 2)).join(' ');
-    if (it.big) txt(l1, 0, 120, 30, C.red, 900); else { txt(l1, 0, 84, 30, C.navy, 900); txt(l2, 0, 118, 30, C.navy, 900); }
-    ctx.restore();
-  });
+  beats.forEach(([a, fn], i) => { if (t < a - .15) return; if (beats[i + 1] && t > beats[i + 1][0] + .3) return;
+    const k = i === 0 ? 1 : eio(P(t, a - .15, a + .15)); ctx.save(); ctx.translate((1 - k) * W, 0); ctx.rotate((1 - k) * .06); fn(); ctx.restore(); });
 }
 function sceneProdutos(t) {
   // vídeo real em tela cheia → sobe para uma janela e abre espaço para o guia e o produto
@@ -468,10 +529,8 @@ function waCard(t) {
   ctx.restore();
 }
 function sceneCD(t) {
-  const g = ctx.createLinearGradient(0, 1150, 0, 1920); g.addColorStop(0, 'rgba(14,26,92,0)'); g.addColorStop(1, 'rgba(14,26,92,.6)'); ctx.fillStyle = g; ctx.fillRect(0, 1150, W, 770);
-  badge(t, 67.3, 72.4, 'Centro de distribuição', 540, 1060, C.red, 46);
-  badge(t, WT('atacado.') - .2, 72.4, 'Atende o atacado', 540, 1180, C.navy, 38);
-  const p = P(t, 67.2, 72.3); truck(lerp(-120, 1240, p), 1470, 1.1, 0);
+  badge(t, 67.3, 72.4, 'Juazeiro do Norte', 540, 590, C.navy, 44);
+  badge(t, WT('atacado.') - .2, 72.4, 'Atende o atacado', 540, 1600, C.red, 44);
 }
 function sceneQuinta(t) {
   cearaMap(t);

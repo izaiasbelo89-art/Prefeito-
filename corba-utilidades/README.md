@@ -63,3 +63,12 @@ Vídeo local (fora do git): `video/out/corba-v2.mp4` e `corba-v2-leve.mp4`.
 - Som de cascos no lugar do motor.
 - Rua São Pedro (Salesianos): não há vídeo dessa loja; fica só mapa + endereço. A fachada de vidro é do Atacarejo (avenida).
 Vídeo local: `video/out/corba-v3.mp4` / `corba-v3-leve.mp4`.
+
+## Versão 4
+- Voltou o carrinho (o Poker Moon saiu).
+- Abertura: logo entra quicando e vai para o canto, moldura vermelha/azul, brilhos, balão "Vem comigo!" e
+  portas de vidro da Corbã que fecham em "antes dessas portas" e abrem em "se abrirem" revelando o mapa.
+- "Hoje, a Corbã reúne": uma cena por item (4 lojinhas + contador; vídeo dos robôs com engrenagem; centro de
+  distribuição ilustrado; vídeo da loja com produtos saltando).
+- Centro de distribuição de Juazeiro: ilustrado (o vídeo do galpão não é do CD e foi retirado).
+Vídeo local: `video/out/corba-v4.mp4` / `corba-v4-leve.mp4`.
