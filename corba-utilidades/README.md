@@ -55,3 +55,11 @@ Pontos de saída: Rodoviária de Iguatu; Basílica de N. Sra. das Dores (Juazeir
 Destinos: Iguatu pela coordenada do guia comercial; Atacarejo, Salesianos e Senador Pompeu **aproximados** (ruas certas,
 número da entrada a confirmar). Montagem: `video/index2.html` + `video/corba2.js` + `guia.js` + `cenarios.js`; trilha `video/audio_corba2.py`.
 Vídeo local (fora do git): `video/out/corba-v2.mp4` e `corba-v2-leve.mp4`.
+
+## Versão 3
+- O carrinho dos mapas foi trocado pelo **Poker Moon** (cavalo do dono, com ele montado), a partir do desenho enviado
+  (`assets/pokermoon.png`, recortado sem a logo; mantido fora do git por conter a imagem de uma pessoa). Trota pela rota real,
+  vira para o lado do movimento e sai de lado na chegada para o pino aparecer. Também conduz os trajetos entre cidades.
+- Som de cascos no lugar do motor.
+- Rua São Pedro (Salesianos): não há vídeo dessa loja; fica só mapa + endereço. A fachada de vidro é do Atacarejo (avenida).
+Vídeo local: `video/out/corba-v3.mp4` / `corba-v3-leve.mp4`.

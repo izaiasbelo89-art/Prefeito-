@@ -224,6 +224,15 @@ def s_engine(d):
     x = lp(np.sign(np.sin(2 * np.pi * np.cumsum(f) / SR)) * .5 + rng.standard_normal(len(t_)) * .1, 400)
     e = np.minimum(1, t_ / .3) * np.minimum(1, (d - t_) / .4)
     return x * e * .35
+def s_hooves(d):
+    out = np.zeros(int(SR * d)); k = 0; t0 = 0.0
+    while t0 < d - .1:
+        for off, g in ((0, 1), (.09, .7), (.17, .85)):           # ritmo de galope (três batidas)
+            n = int(SR * .05); x = bp(rng.standard_normal(n), 300, 2500) * np.exp(-np.arange(n) / SR / .012) + sine(180, .05) * np.exp(-np.arange(n) / SR / .02) * .6
+            i = int((t0 + off) * SR); seg = out[i:i + n]; seg += x[:len(seg)] * g
+        t0 += .38
+    e = np.minimum(1, np.arange(len(out)) / SR / .2) * np.minimum(1, (d - np.arange(len(out)) / SR) / .3)
+    return out * e * .5
 import json as _js
 WD = _js.load(open('words.json'))
 def WT(w, after=0): return next((d['t0'] for d in WD if d['w'] == w and d['t0'] >= after), 0)
@@ -235,17 +244,17 @@ E += [(9.75, s_whoosh(.6, 400, 6000, .45), 1), (11.8, s_whoosh(.4, 600, 6000, .3
 E += [(14.6, s_whoosh(.5, 500, 5000, .4), 1), (15.3, s_pop(700), 1)] + [(15.8 + k * .17, s_tick(.6), 1) for k in range(7)] + [(17.0, s_pop(900), 1), (WT('abriu'), s_notif(), .5)]
 E += [(20.7, s_whoosh(.5, 500, 5000, .4), 1), (WT('caminhar') - .6, s_whoosh(1.4, 600, 5000, .25), 1), (WT('caminhar') + 1.0, s_pop(800), 1)]
 E += [(26.6, s_whoosh(.5, 400, 5000, .4), 1)] + [(WT(w, 26) - .05, s_pop(700 + i * 120), 1) for i, w in enumerate(('quatro', 'fabricação', 'centro', 'variedade'))]
-E += [(33.6, s_whoosh(.5, 400, 5000, .4), 1), (34.1, s_engine(1.3), .8), (35.3, s_notif(), .6), (35.6, s_whoosh(.5, 600, 6000, .35), 1), (WT('Santos') - .1, s_pop(700), .8)]
+E += [(33.6, s_whoosh(.5, 400, 5000, .4), 1), (34.1, s_hooves(1.3), .8), (35.3, s_notif(), .6), (35.6, s_whoosh(.5, 600, 6000, .35), 1), (WT('Santos') - .1, s_pop(700), .8)]
 E += [(37.9, s_whoosh(1.2, 300, 5000, .35), 1), (38.9, s_whoosh(.5, 800, 8000, .45), 1)]
 E += [(39.6, s_whoosh(.4, 600, 5000, .3), 1)] + [(WT(w) - .05, s_whoosh(.35, 1000, 7000, .25), 1) for w in ('panelas', 'utensílios', 'organização,', 'decoração,', 'cama,')]
 E += [(WT('panelas') + .35, s_pop(500), 1)] + [(WT('utensílios') + .4 + d, s_tick(.9), 1) for d in (0, .25, .45)] + [(WT('organização,') + .35 + d, s_pop(600 + d * 400), 1) for d in (0, .3, .6)]
 E += [(WT('decoração,') + .4, s_sweep_up(), .7), (WT('cama,') + .2, s_pop(900), .8), (46.0, s_whoosh(.5, 400, 5000, .4), 1), (48.4, s_notif(), .55)]
-E += [(52.8, s_whoosh(.5, 400, 5000, .4), 1), (53.1, s_click(), 1), (53.15, s_blip(1300), 1), (53.3, s_engine(1.4), .7), (54.85, s_whoosh(.5, 500, 5000, .35), 1), (WT('duas') - .1, s_pop(800), 1)]
-E += [(56.6, s_whoosh(.5, 400, 5000, .4), 1), (57.0, s_engine(1.5), .8), (58.5, s_notif(), .6), (59.5, s_whoosh(.8, 300, 6000, .5), 1), (WT('Padre') - .45, s_pop(700), .8)]
-E += [(63.0, s_whoosh(.5, 400, 5000, .4), 1), (63.25, s_engine(1.1), .8), (64.3, s_notif(), .6), (64.85, s_pop(700), .8)]
+E += [(52.8, s_whoosh(.5, 400, 5000, .4), 1), (53.1, s_click(), 1), (53.15, s_blip(1300), 1), (53.3, s_hooves(1.4), .7), (54.85, s_whoosh(.5, 500, 5000, .35), 1), (WT('duas') - .1, s_pop(800), 1)]
+E += [(56.6, s_whoosh(.5, 400, 5000, .4), 1), (57.0, s_hooves(1.5), .8), (58.5, s_notif(), .6), (59.5, s_whoosh(.8, 300, 6000, .5), 1), (WT('Padre') - .45, s_pop(700), .8)]
+E += [(63.0, s_whoosh(.5, 400, 5000, .4), 1), (63.25, s_hooves(1.1), .8), (64.3, s_notif(), .6), (64.85, s_pop(700), .8)]
 E += [(67.0, s_whoosh(.5, 400, 5000, .4), 1), (67.2, s_engine(5.0), .5), (67.3, s_pop(700), .8)]
-E += [(72.4, s_whoosh(.5, 400, 5000, .4), 1), (72.6, s_click(), 1), (72.65, s_blip(1300), 1), (72.8, s_engine(1.4), .7), (WT('agosto') - .1, s_pop(600), 1)]
-E += [(74.45, s_whoosh(.5, 500, 5000, .35), 1), (75.85, s_whoosh(.5, 400, 5000, .4), 1), (76.1, s_engine(.8), .8), (76.9, s_notif(), .6), (77.55, s_pop(700), .8)]
+E += [(72.4, s_whoosh(.5, 400, 5000, .4), 1), (72.6, s_click(), 1), (72.65, s_blip(1300), 1), (72.8, s_hooves(1.4), .7), (WT('agosto') - .1, s_pop(600), 1)]
+E += [(74.45, s_whoosh(.5, 500, 5000, .35), 1), (75.85, s_whoosh(.5, 400, 5000, .4), 1), (76.1, s_hooves(.8), .8), (76.9, s_notif(), .6), (77.55, s_pop(700), .8)]
 E += [(80.7, s_whoosh(.6, 400, 5000, .4), 1)] + [(80.9 + k * .25, s_pop(700 + k * 120), .9) for k in range(3)]
 E += [(WT('quinta') - .1, s_sweep_up(), 1), (WT('Onde?') - .05, s_pop(500), 1.1), (WT('breve.') - .55, s_blip(1600), 1)]
 E += [(86.6, s_whoosh(.7, 400, 6000, .45), 1), (86.75, s_impact(), .35), (86.8, s_chime(), 1), (WT('merece') - .5, s_pop(900), 1), (89.9, s_pop(700), .8)]

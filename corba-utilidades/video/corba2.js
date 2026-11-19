@@ -9,7 +9,7 @@ const C = { red: '#E2231A', red2: '#B9170F', blue: '#3FA2E8', navy: '#1B2F8F', n
 const IMG = {};
 function loadImg(k, src) { return new Promise(r => { const i = new Image(); i.onload = () => { IMG[k] = i; r(); }; i.onerror = r; i.src = src; }); }
 window.ready = Promise.all([
-  loadImg('logo', '../assets/logo.png'),
+  loadImg('logo', '../assets/logo.png'), loadImg('pm', '../assets/pokermoon.png'),
   ...Object.entries(MAPAS).map(([k, m]) => loadImg(k, '../mapas/' + m.img)),
   document.fonts.load('900 60px Inter'), document.fonts.load('800 60px Inter'), document.fonts.load('600 60px Inter'),
 ]).catch(() => {});
@@ -207,6 +207,21 @@ function carTop(x, y, ang, s) {
   circle(29, -10, 3, '#FFF3B0'); circle(29, 10, 3, '#FFF3B0');
   ctx.restore();
 }
+/* Poker Moon (cavalo do dono, com ele montado) — substitui o carrinho. O desenho original olha para a esquerda. */
+function pokerMoon(x, y, h, face, t, moving, alpha = 1) {
+  if (!IMG.pm || alpha <= 0) return;
+  const im = IMG.pm, w = h * im.width / im.height;
+  const gal = moving ? Math.abs(Math.sin(t * 13)) : 0;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.translate(x, y - gal * h * .05);
+  ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.beginPath(); ctx.ellipse(0, gal * h * .05 + 4, w * .42, h * .05, 0, 0, TAU); ctx.fill();
+  if (moving) { for (let i = 0; i < 4; i++) { const ph = (t * 3 + i / 4) % 1; ctx.fillStyle = `rgba(200,170,120,${.45 * (1 - ph)})`; ctx.beginPath(); ctx.arc(-face * (w * .45 + ph * 60), -8 - ph * 20 + gal * h * .05, 10 + ph * 18, 0, TAU); ctx.fill(); } }
+  ctx.rotate(moving ? Math.sin(t * 13) * .035 : Math.sin(t * 2) * .01);
+  ctx.scale(face > 0 ? -1 : 1, 1 + (moving ? (gal - .5) * .03 : 0));
+  ctx.drawImage(im, -w / 2, -h, w, h);
+  ctx.restore();
+}
+function routeFace(R, d, fallback) { const a = alongRoute(R, d), b = alongRoute(R, d + 60); const dx = b[0] - a[0]; return Math.abs(dx) > 6 ? Math.sign(dx) : fallback; }
+
 /* cena de mapa: amplo (cidade, z13) -> ruas (z16) -> percurso -> chegada.
    cfg: {key, city, t0, ta, tb, t1, label, origin} — ta..tb: carrinho andando; antes de ta a câmera desce da cidade para as ruas. */
 function mapScene(t, cfg) {
@@ -251,13 +266,19 @@ function mapScene(t, cfg) {
   const arr = P(t, cfg.tb - .05, cfg.tb + .4);
   if (arr > 0) { for (let q = 0; q < 2; q++) { const ph = ((t - cfg.tb) * .9 + q * .5) % 1; ring(R.dest[0], R.dest[1], (12 + ph * 60) * k, `rgba(226,35,26,${.8 * (1 - ph)})`, 5 * k); }
     ctx.save(); ctx.translate(R.dest[0], R.dest[1] - (1 - eback(arr)) * 60 * k); ctx.scale(k * 1.3, k * 1.3); pinIcon(0, 0, C.red, 1); ctx.restore(); }
-  if (t >= cfg.ta - .3) carTop(carx, cary, ang, 1.4 * k);
   ctx.restore();
+  // Poker Moon em coordenadas de tela (tamanho constante)
+  if (t >= cfg.ta - .3) {
+    const face = routeFace(R, p * R.L, R.dest[0] >= R.pts[0][0] ? 1 : -1);
+    const side = eio(P(t, cfg.tb + .05, cfg.tb + .55));
+    const sx = 540 + (carx - camx) * s - side * 170 * face, sy = 960 + (cary - camy) * s;
+    pokerMoon(sx, sy, 300, face, t, t > cfg.ta && t < cfg.tb + .1, P(t, cfg.ta - .3, cfg.ta));
+  }
   // rótulos em tela
   ctx.restore();
   if (cfg.label) {
     const [dx, dy] = [540 + (R.dest[0] - camx) * s, 960 + (R.dest[1] - camy) * s];
-    const la = win(t, cfg.tb + .1, cfg.t1, .3, .2); if (la > 0) { const pp = eback(P(t, cfg.tb + .1, cfg.tb + .45)); ctx.save(); ctx.globalAlpha = la; ctx.translate(dx, dy + 70); ctx.scale(pp, pp);
+    const la = win(t, cfg.tb + .1, cfg.labelEnd || cfg.t1, .3, .2); if (la > 0) { const pp = eback(P(t, cfg.tb + .1, cfg.tb + .45)); ctx.save(); ctx.globalAlpha = la; ctx.translate(dx, dy + 70); ctx.scale(pp, pp);
       font(44, 900); const w = ctx.measureText(cfg.label).width + 70; shadow(20, 8); fillRR(-w / 2, -40, w, 80, 40, C.red); noShadow(); txt(cfg.label, 0, 2, 44, '#fff', 900);
       if (cfg.sub) { font(32, 800); const w2 = ctx.measureText(cfg.sub).width + 50; fillRR(-w2 / 2, 50, w2, 56, 28, '#fff'); txt(cfg.sub, 0, 78, 32, C.navy, 800); } ctx.restore(); }
   }
@@ -270,7 +291,7 @@ function cearaLink(t, from, to, ta, tb, o = {}) {
   const A = mp(CITIES[from]), B = mp(CITIES[to]); const p = eio(P(t, ta, tb));
   ['iguatu', 'juazeiro', 'pompeu'].forEach(k => { if (o.show && !o.show.includes(k)) return; const [x, y] = mp(CITIES[k]); pinIcon(x, y, k === to ? C.red : C.blue, k === to ? .95 : .7); });
   ctx.save(); ctx.setLineDash([4, 16]); ctx.lineCap = 'round'; ctx.strokeStyle = C.navy; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(...A); ctx.lineTo(lerp(A[0], B[0], p), lerp(A[1], B[1], p)); ctx.stroke(); ctx.restore();
-  truck(lerp(A[0], B[0], p) + 60, lerp(A[1], B[1], p), .8, 0, B[0] < A[0]);
+  pokerMoon(lerp(A[0], B[0], p), lerp(A[1], B[1], p) + 10, 210, B[0] >= A[0] ? 1 : -1, t, p > 0 && p < 1);
   const lb = o.label; if (lb) { const [x, y] = B; const la = P(t, tb - .1, tb + .2); if (la > 0) { ctx.save(); ctx.globalAlpha = la; font(36, 900); const w = ctx.measureText(lb).width + 40; shadow(12, 4); fillRR(x + 40, y - 74, w, 60, 30, C.navy); noShadow(); txt(lb, x + 60, y - 43, 36, '#fff', 900, 'left'); ctx.restore(); } }
 }
 function touchRipple(t, at, x, y) { const p = P(t, at, at + .6); if (p > 0 && p < 1) { ring(x, y, 20 + p * 90, `rgba(63,162,232,${1 - p})`, 8); circle(x, y, 14 * (1 - p), 'rgba(63,162,232,.8)'); } }
@@ -353,8 +374,7 @@ function scene(t) {
   if (t >= 54.85 && t < 56.8) { ctx.save(); ctx.globalAlpha = P(t, 54.85, 55.1) * (1 - P(t, 56.55, 56.8)); SCENES.juazeiro(t, eio(P(t, 54.85, 56.8))); badge(t, WT('duas') - .1, 56.75, 'Duas lojas', 540, 1390, C.red, 50); ctx.restore(); }
   if (t >= 56.6 && t < 59.8) { ctx.save(); ctx.globalAlpha = P(t, 56.6, 56.9) * (1 - P(t, 59.5, 59.8)); mapScene(t, { key: 'atacarejo', city: 'cidade_juazeiro', t0: 56.6, ta: 57.0, tb: 58.5, t1: 59.8, label: 'Corbã Atacarejo', sub: 'Desde 2018', origin: 'Basílica de N. Sra. das Dores' }); ctx.restore(); }
   if (t >= 59.5 && t < 63.25) { clipFull('mundo', t, 1, clipIn('mundo', t, .3, .25)); addressCard(t, WT('Padre') - .45, 63.0, 'Av. Padre Cícero, 4370A', 'São José', 'Juazeiro do Norte – CE'); }
-  if (t >= 63.0 && t < 64.95) { ctx.save(); ctx.globalAlpha = P(t, 63.0, 63.25) * (1 - P(t, 64.7, 64.95)); mapScene(t, { key: 'saopedro', city: 'cidade_juazeiro', t0: 63.0, ta: 63.25, tb: 64.3, t1: 64.95, label: 'Corbã Salesianos', origin: 'Basílica de N. Sra. das Dores' }); ctx.restore(); }
-  if (t >= 64.7 && t < 67.3) { clipFull('saopedro', t, lerp(1.05, 1, P(t, 64.7, 67.3)), clipIn('saopedro', t, .25, .25)); addressCard(t, 64.85, 67.1, 'Rua São Pedro, 1227', 'Salesianos', 'Juazeiro do Norte – CE'); }
+  if (t >= 63.0 && t < 67.3) { ctx.save(); ctx.globalAlpha = P(t, 63.0, 63.25) * (1 - P(t, 67.05, 67.3)); mapScene(t, { key: 'saopedro', city: 'cidade_juazeiro', t0: 63.0, ta: 63.25, tb: 64.3, t1: 67.3, labelEnd: 65.0, label: 'Corbã Salesianos', origin: 'Basílica de N. Sra. das Dores' }); addressCard(t, 64.9, 67.1, 'Rua São Pedro, 1227', 'Salesianos', 'Juazeiro do Norte – CE'); ctx.restore(); }
   if (t >= 67.0 && t < 72.6) { clipFull('cd', t, 1, clipIn('cd', t, .3, .3)); sceneCD(t); }
   // 10. Senador Pompeu
   if (t >= 72.4 && t < 74.7) { ctx.save(); ctx.globalAlpha = P(t, 72.4, 72.7) * (1 - P(t, 74.45, 74.7)); cearaLink(t, 'juazeiro', 'pompeu', 72.8, 74.2, { label: 'Senador Pompeu' }); touchRipple(t, 72.6, 170 + 105, 1500 - 270);
