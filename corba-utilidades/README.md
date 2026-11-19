@@ -72,3 +72,9 @@ Vídeo local: `video/out/corba-v3.mp4` / `corba-v3-leve.mp4`.
   distribuição ilustrado; vídeo da loja com produtos saltando).
 - Centro de distribuição de Juazeiro: ilustrado (o vídeo do galpão não é do CD e foi retirado).
 Vídeo local: `video/out/corba-v4.mp4` / `corba-v4-leve.mp4`.
+
+## Versão 5
+- Abertura com a loja de Juazeiro (Av. Padre Cícero, fachada de vidro) no lugar da fachada de Iguatu.
+- Senador Pompeu: foto da fachada (`assets/fotos/senador-pompeu-fachada.jpg`, fora do git) com aproximação e brilho no
+  letreiro, junto do endereço; saiu o vídeo do letreiro da praça.
+Vídeo local: `video/out/corba-v5.mp4` / `corba-v5-leve.mp4`.

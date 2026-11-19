@@ -9,7 +9,7 @@ const C = { red: '#E2231A', red2: '#B9170F', blue: '#3FA2E8', navy: '#1B2F8F', n
 const IMG = {};
 function loadImg(k, src) { return new Promise(r => { const i = new Image(); i.onload = () => { IMG[k] = i; r(); }; i.onerror = r; i.src = src; }); }
 window.ready = Promise.all([
-  loadImg('logo', '../assets/logo.png'), loadImg('pm', '../assets/pokermoon.png'),
+  loadImg('logo', '../assets/logo.png'), loadImg('spf', '../assets/fotos/senador-pompeu-fachada.jpg'),
   ...Object.entries(MAPAS).map(([k, m]) => loadImg(k, '../mapas/' + m.img)),
   document.fonts.load('900 60px Inter'), document.fonts.load('800 60px Inter'), document.fonts.load('600 60px Inter'),
 ]).catch(() => {});
@@ -381,7 +381,7 @@ function scene(t) {
     badge(t, WT('agosto') - .1, 74.6, 'Agosto de 2026', 540, 1420, C.red, 50); ctx.restore(); }
   if (t >= 74.45 && t < 76.1) { ctx.save(); ctx.globalAlpha = P(t, 74.45, 74.7) * (1 - P(t, 75.85, 76.1)); SCENES.pompeu(t, eio(P(t, 74.45, 76.1))); ctx.restore(); }
   if (t >= 75.85 && t < 77.65) { ctx.save(); ctx.globalAlpha = P(t, 75.85, 76.1) * (1 - P(t, 77.4, 77.65)); mapScene(t, { key: 'pompeu', city: 'cidade_pompeu', t0: 75.85, ta: 76.1, tb: 76.9, t1: 77.65, label: 'Corbã Senador Pompeu', sub: '4ª loja', origin: 'Centro de Senador Pompeu' }); ctx.restore(); }
-  if (t >= 77.4 && t < 81.0) { clipFull('pompeu', t, 1, clipIn('pompeu', t, .25, .3)); addressCard(t, WT('Avenida') > 70 ? 77.55 : 77.55, 80.8, 'Av. Francisco França Cambraia, 338', 'Centro', 'Senador Pompeu – CE'); }
+  if (t >= 77.4 && t < 81.0) { ctx.save(); ctx.globalAlpha = P(t, 77.4, 77.7) * (1 - P(t, 80.7, 81.0)); fachadaPompeu(t); addressCard(t, 77.55, 80.8, 'Av. Francisco França Cambraia, 338', 'Centro', 'Senador Pompeu – CE', 1080); ctx.restore(); }
   // 11. Quinta loja
   if (t >= 80.7 && t < 86.9) { ctx.save(); ctx.globalAlpha = P(t, 80.7, 81.0) * (1 - P(t, 86.6, 86.9)); sceneQuinta(t); ctx.restore(); }
   // 12. Assinatura
@@ -426,6 +426,17 @@ function doors(t, a, open) {
   line2(W / 2 - (1 - k) * W / 2, 0, W / 2 - (1 - k) * W / 2, H);
 }
 function line2() {}
+function fachadaPompeu(t) {
+  const im = IMG.spf; if (!im) return;
+  const k = eio(P(t, 77.4, 81.0)), s0 = Math.max(W / im.width, H / im.height), s = s0 * lerp(1.0, 1.14, k);
+  const fx = 562, fy = lerp(860, 760, k);
+  ctx.save(); ctx.translate(540, 960); ctx.scale(s, s); ctx.translate(-fx, -fy); ctx.drawImage(im, 0, 0);
+  // brilho passando pelo letreiro
+  const sp = P(t, 77.9, 78.8); if (sp > 0 && sp < 1) { ctx.save(); ctx.beginPath(); ctx.rect(250, 360, 620, 220); ctx.clip(); ctx.globalCompositeOperation = 'lighter';
+    const x = lerp(150, 950, sp); const g = ctx.createLinearGradient(x - 80, 0, x + 80, 0); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.5, 'rgba(255,255,255,.6)'); g.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = g; ctx.fillRect(150, 360, 900, 220); ctx.restore(); }
+  ctx.restore();
+  for (let i = 0; i < 6; i++) { const ph = (t * .9 + rnd2(i + 20)) % 1; sparkle(200 + rnd2(i + 4) * 700, 330 + rnd2(i + 9) * 260, 14 + rnd2(i) * 12, Math.sin(ph * Math.PI) * P(t, 78.0, 78.5)); }
+}
 function sceneCearaIguatu(t) {
   // mapa do estado aproxima em Iguatu; depois mapa real da cidade com a fábrica
   const z = eio(P(t, 6.3, 8.6));
