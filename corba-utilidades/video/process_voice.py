@@ -42,6 +42,7 @@ af = (f'atempo={TEMPO},highpass=f=85,equalizer=f=220:t=q:w=1.2:g=-2.5,equalizer=
       'highshelf=f=9000:g=2,deesser=i=0.35,acompressor=threshold=-22dB:ratio=3:attack=5:release=90:makeup=3dB,'
       'afade=t=in:d=0.01')
 subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', '../audio/_tmp_tight.wav', '-af', af, '-ar', str(SR), '-ac', '1', '../audio/locucao-final.wav'], check=True)
+import os; os.remove('../audio/_tmp_tight.wav')
 bps = [(round(o, 4), round(n / TEMPO, 4)) for o, n in bps]
 old_len = len(x) / SR; new_len = bps[-1][1]
 print(f'pausas encurtadas: {len(pauses)}; {old_len:.2f}s -> {new_len:.2f}s')

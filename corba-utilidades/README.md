@@ -1,19 +1,13 @@
 # Corbã Utilidades — vídeo
 
-- `audio/locucao-original-recortada.wav` / `audio/locucao-corba.mp3`: locução (voz "Gabriel – Bright and charismatic"), 83,4 s.
-  Cortada no início real da fala: os 2,45 s iniciais da gravação de tela eram uma repetição de um trecho
-  (fala de antes do reinício do player) e foram removidos; termina em "…que ela vai abrir.".
+- `audio/locucao-original-recortada.wav` / `audio/locucao-corba.mp3`: narração atual (voz "Gabriel – Bright and charismatic"), 72,5 s.
+  Os 2,4 s iniciais da gravação eram sobra de uma reprodução anterior (player em 00:03, reiniciado no 1º segundo) e foram cortados.
+- `audio/locucao-final.wav` / `audio/locucao-corba-tratada.mp3`: versão tratada, 59,2 s (pausas encurtadas, ritmo 8% mais rápido,
+  equalização e compressão; `video/process_voice.py`). `video/warp.json` mapeia tempo original → tratado.
+- Texto em `video/texto.txt`; tempo de cada frase na versão tratada em `video/timing.json` (`video/align.py`).
+- `audio/v1-quinta-loja/`: narração anterior ("A Corbã vai abrir a quinta loja…"), substituída.
 
-Tema: a Corbã vai abrir a quinta loja (hoje são quatro lojas em três cidades) e pergunta ao público
-em que cidade ela vai abrir.
-
-Final do texto (visível na gravação): "Por enquanto, são quatro lojas em três cidades. E lembra da pergunta lá do
-começo? A quinta loja da Corbã tá a caminho. Qual é o seu palpite? Conta aqui nos comentários em que cidade você
-acha que ela vai abrir."
-
-## Locução tratada
-`audio/locucao-final.wav` / `audio/locucao-corba-tratada.mp3`: 68,2 s (original 83,4 s). Gerada por
-`video/process_voice.py`: pausas encurtadas, ritmo 8% mais rápido sem mudar o tom, equalização e compressão.
-`video/warp.json` mapeia tempo original → tratado.
-
-Texto completo em `video/texto.txt`; tempos de cada frase (na locução tratada) em `video/timing.json` (`video/align.py`).
+Tema: história da Corbã: começou na indústria de alumínio em Iguatu (CE); 1ª loja de varejo em janeiro de 2002;
+hoje 4 lojas (Iguatu – R. Santos Dumont, Centro; Juazeiro do Norte – Atacarejo na Av. Padre Cícero, São José, e R. São Pedro,
+Salesianos; Senador Pompeu – Av. Francisco França Cambraia, Centro, inaugurada em agosto de 2026), fabricação própria e
+centro de distribuição (Juazeiro). A quinta loja vem aí. Slogan: "Sua casa merece Corbã."
