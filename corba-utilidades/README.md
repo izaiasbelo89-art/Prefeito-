@@ -11,3 +11,7 @@ Tema: história da Corbã: começou na indústria de alumínio em Iguatu (CE); 1
 hoje 4 lojas (Iguatu – R. Santos Dumont, Centro; Juazeiro do Norte – Atacarejo na Av. Padre Cícero, São José, e R. São Pedro,
 Salesianos; Senador Pompeu – Av. Francisco França Cambraia, Centro, inaugurada em agosto de 2026), fabricação própria e
 centro de distribuição (Juazeiro). A quinta loja vem aí. Slogan: "Sua casa merece Corbã."
+
+## Identidade
+- `assets/logo.png`: logo redonda (fundo branco circular, recortada do print do perfil, 735×735, fundo transparente).
+- Cores: vermelho (~#E2231A), azul-claro (~#3FA2E8), azul-marinho (~#1B2F8F), branco. Assinatura na logo: "seu dia mas feliz".
