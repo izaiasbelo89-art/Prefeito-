@@ -15,3 +15,21 @@ centro de distribuição (Juazeiro). A quinta loja vem aí. Slogan: "Sua casa me
 ## Identidade
 - `assets/logo.png`: logo redonda (fundo branco circular, recortada do print do perfil, 735×735, fundo transparente).
 - Cores: vermelho (~#E2231A), azul-claro (~#3FA2E8), azul-marinho (~#1B2F8F), branco. Assinatura na logo: "seu dia mas feliz".
+
+## Vídeos recebidos (mantidos só localmente em `assets/videos/`, fora do git)
+464×832, 60 fps, câmera 360° reenquadrada.
+
+| Arquivo | Conteúdo | Uso previsto |
+|---|---|---|
+| fabrica-galpoes-aereo.mov (9 s) | galpões da fábrica vistos do alto | Iguatu – indústria |
+| fabrica-esteira-panelas.mov (20 s) | esteira com panelas | indústria de alumínio |
+| fabrica-maquinas.mov (4 s) | máquinas | indústria |
+| fabrica-robos.mov (10 s) | braços robóticos | indústria |
+| fabrica-linha-panelas.mov (7 s) | panelas na esteira | fabricação própria |
+| fabrica-embalagem.mov (7 s) | linha de embalagem | fabricação própria |
+| iguatu-letreiro.mov (4 s) | letreiro "IGUATU" | chegada em Iguatu |
+| juazeiro-padre-cicero-aereo.mov (17 s) | estátua do Padre Cícero | chegada em Juazeiro do Norte |
+| senador-pompeu-letreiro-praca.mov (9 s) | praça com letreiro "SENADOR POMPEU" | chegada em Senador Pompeu |
+| senador-pompeu-igreja-aereo.mov (20 s) | igreja matriz, aérea | Senador Pompeu |
+| galpao-aereo-a-identificar.mov (19 s) | galpão visto do alto | a confirmar (centro de distribuição?) |
+| loja-fachada-a-identificar.mov (7 s) | fachada de vidro de uma loja Corbã | a confirmar qual loja |
