@@ -1,7 +1,7 @@
 """Trilha do meme: áudio original da arena + efeitos sintetizados (sem material de terceiros)."""
 import numpy as np, wave, json
 from scipy.signal import butter, sosfilt, resample
-SR = 44100; T = json.load(open('tempos.json')); DUR = 18.0; N = int(SR * DUR)
+SR = 44100; T = json.load(open('tempos.json')); DUR = T['DUR']; N = int(SR * DUR)
 rng = np.random.default_rng(3)
 def rd(f):
     w = wave.open(f); return np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float) / 32768
@@ -13,18 +13,19 @@ def env(n, a, r): t = np.arange(n) / SR; return np.minimum(1, t / max(a, 1e-4)) 
 def sine(f, d): return np.sin(2 * np.pi * f * tt(d))
 mix = np.zeros(N)
 def add(x, t0, g=1.0):
-    i = int(t0 * SR);
+    i = int(t0 * SR)
     if i >= N: return
     seg = mix[i:i + len(x)]; seg += x[:len(seg)] * g
 def fade(x, fi=.02, fo=.05):
     x = x.copy(); a, b = int(fi * SR), int(fo * SR); x[:a] *= np.linspace(0, 1, a); x[-b:] *= np.linspace(1, 0, b); return x
-corrida, boi, riso = rd('out/orig_corrida.wav'), rd('out/orig_boi.wav'), rd('out/orig_riso.wav')
-# áudio original
-add(fade(corrida[:int((T['var'] - T['corrida']) * SR)], .05, .15), T['corrida'], 1.3)
-# replay: áudio da queda desacelerado (fica grave, como câmera lenta)
-src = corrida[int((19.55 - 14.6) * SR):int((21.05 - 14.6) * SR)]
-slow = resample(src, int(len(src) / .35)); add(fade(lp(slow, 3000), .1, .3)[:int((T['boi'] - T['replay']) * SR)], T['replay'], 1.1)
-add(fade(boi), T['boi'], 1.2); add(fade(riso, .05, .3), T['riso'], 2.4)
+full = rd('out/orig_full.wav'); riso = rd('out/orig_riso.wav')
+cut = lambda a, b: full[int(a * SR):int(b * SR)]
+add(fade(cut(14.2, 19.55), .05, .04), T['aprox'], 1.3)
+for t0, t1, a, b, v in T['RAMP_T']:
+    seg = cut(a, b); add(fade(lp(resample(seg, int(len(seg) / v)), 3500), .02, .03), t0, 1.2)
+add(fade(cut(21.05, 23.8), .03, .2), T['chao'], 1.3)
+add(fade(cut(27.1, 28.9), .05, .15), T['boi'], 1.2)
+add(fade(riso, .05, .3), T['riso'], 2.4)
 # ---- efeitos ----
 def scratch():
     d = .45; t = tt(d); f = 400 + 1600 * np.abs(np.sin(2 * np.pi * 5 * t)); x = np.sin(2 * np.pi * np.cumsum(f) / SR) * .5 + bp(rng.standard_normal(len(t)), 800, 5000) * .6
@@ -57,13 +58,12 @@ def boing():
 def pop(f=900): d = .12; t = tt(d); fr = f * (1 + 1.2 * np.exp(-t * 40)); return np.sin(2 * np.pi * np.cumsum(fr) / SR) * env(int(SR * d), .001, .035) * .45
 def ding(): return sum(sine(f, 1.2) * np.exp(-tt(1.2) * (3 + k)) for k, f in enumerate((1046.5, 1318.5, 1568))) * .18
 add(whoosh(.5, .6), 0.0); add(pop(700), .1)
-add(scratch(), T['corrida'] - .15, 1.0)
-add(suspense(T['queda'] + .9 - T['corrida']), T['corrida'], 1.0)
-add(thud(), T['chao'], 1.0); add(crowd(1.8), T['chao'] + .05, 1.0)
-add(whistle(), T['var'] - .05, 1.0); add(tvbeep(), T['var'] + .25, 1.0)
-add(whoosh(.6, .5), T['replay'] - .1)
-add(thud(), T['TCHAO_REPLAY'], 1.2); add(boing(), T['TCHAO_REPLAY'] + .05, .9)
-add(ding(), T['TCHAO_REPLAY'] + .6, 1.0)
+add(scratch(), T['aprox'] - .15, 1.0)
+add(suspense(T['lenta'] - T['aprox'] + .3), T['aprox'], .45)
+add(whoosh(.8, .55), T['lenta'] - .2)
+add(thud(), T['IMPACTO'], 1.3); add(boing(), T['IMPACTO'] + .05, .8)
+add(crowd(1.8), T['chao'] + .05, .9)
+add(whistle(), T['chao'] + 1.2, .9); add(ding(), T['chao'] + 1.35, 1.0)
 add(whoosh(.4, .5), T['boi'] - .1); add(pop(600), T['boi'] + .1)
 add(whoosh(.4, .5), T['riso'] - .1); add(pop(900), T['riso'] + .15)
 add(scratch(), T['loop'] - .05, .8)
