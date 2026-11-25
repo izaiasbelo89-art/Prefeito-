@@ -1,0 +1,6 @@
+[
+ {"id": "corrida", "file": "/tmp/claude-0/-home-user-Prefeito-/36663a41-0264-5bfa-9451-fbc7329907c7/scratchpad/vaquejada/dl/IMG_4652.mov", "a": 14.6, "b": 21.15, "fps": 30},
+ {"id": "queda60", "file": "/tmp/claude-0/-home-user-Prefeito-/36663a41-0264-5bfa-9451-fbc7329907c7/scratchpad/vaquejada/dl/IMG_4652.mov", "a": 19.5, "b": 21.05, "fps": 60},
+ {"id": "boi",     "file": "/tmp/claude-0/-home-user-Prefeito-/36663a41-0264-5bfa-9451-fbc7329907c7/scratchpad/vaquejada/dl/IMG_4652.mov", "a": 27.1, "b": 29.1, "fps": 30},
+ {"id": "riso",    "file": "/tmp/claude-0/-home-user-Prefeito-/36663a41-0264-5bfa-9451-fbc7329907c7/scratchpad/vaquejada/dl/IMG_4654.mov", "a": 2.5,  "b": 5.9,  "fps": 30}
+]
