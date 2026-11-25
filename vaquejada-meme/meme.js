@@ -64,7 +64,7 @@ function placar(t) {
   ctx.beginPath(); ctx.roundRect(-400, -56, 260, 112, [26, 0, 0, 26]); ctx.fillStyle = '#C62828'; ctx.fill();
   ctx.beginPath(); ctx.roundRect(140, -56, 260, 112, [0, 26, 26, 0]); ctx.fillStyle = '#1565C0'; ctx.fill();
   ctx.font = '900 50px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff';
-  ctx.fillText('🐂 BOI', -270, 3); ctx.font = '900 38px Inter, sans-serif'; ctx.fillText('VAQUEIRO', 270, 3);
+  ctx.fillText('🐂 BOI', -270, 3); ctx.font = '900 46px Inter, sans-serif'; ctx.fillText('NEGÃO', 270, 3);
   ctx.save(); ctx.scale(pop, pop); ctx.font = '900 66px Inter, sans-serif'; ctx.fillStyle = virou ? '#FFD54F' : '#fff'; ctx.fillText(virou ? '1 × 0' : '0 × 0', 0, 4); ctx.restore();
   ctx.restore();
 }
@@ -123,12 +123,12 @@ function render(t) {
   // textos
   if (t < T.corrida) { const p = eback(P(t, .05, .35)); ctx.save(); ctx.translate(540, 1440); ctx.scale(p * (1 + .04 * Math.sin(t * 12)), p * (1 + .04 * Math.sin(t * 12))); memeText('ESPERA O FINAL 😂', 0, 0, 96, '#FFD54F'); ctx.restore(); }
   popText(t, T.corrida + .1, 3.5, ['Treino de vaquejada 🐎'], 1330, 70, '#fff');
-  popText(t, 3.55, T.queda + .15, ['Será que ele', 'derruba o boi? 🤔'], 1330, 76, '#fff');
+  popText(t, 3.55, T.queda + .15, ['Será que o Negão', 'derruba o boi? 🤔'], 1330, 76, '#fff');
   popText(t, T.chao + .02, T.var, ['UUUUUH! 😱'], 1330, 110, '#FFD54F');
   if (t >= TCHAO_REPLAY && t < TCHAO_REPLAY + .9) { const p = eback(P(t, TCHAO_REPLAY, TCHAO_REPLAY + .25)); ctx.save(); ctx.translate(540, 1300); ctx.rotate(-.12); ctx.scale(p, p); memeText('TUM! 💥', 0, 0, 140, '#FF7043'); ctx.restore(); }
   if (t >= TCHAO_REPLAY + .6 && t < T.boi) { const p = eback(P(t, TCHAO_REPLAY + .6, TCHAO_REPLAY + .9)); ctx.save(); ctx.translate(540, 1420); ctx.rotate(-.06); ctx.scale(p, p);
     ctx.fillStyle = 'rgba(27,94,32,.92)'; ctx.beginPath(); ctx.roundRect(-430, -80, 860, 160, 22); ctx.fill(); ctx.strokeStyle = '#A5D6A7'; ctx.lineWidth = 8; ctx.stroke(); memeText('LANCE CONFIRMADO ✅', 0, 2, 66, '#fff', { stroke: '#0B3D0E' }); ctx.restore(); }
-  popText(t, T.boi + .1, T.riso, ['O boi: tá tudo bem', 'aí, parceiro? 🐂'], 1330, 74, '#fff');
+  popText(t, T.boi + .1, T.riso, ['O boi: tá tudo bem', 'aí, Negão? 🐂'], 1330, 74, '#fff');
   popText(t, T.riso + .15, T.loop + .02, ['Treino é treino… 😂'], 1330, 88, '#FFD54F');
 }
 window.renderFrame = render; window.DUR = DUR; window.FPS = FPS;
