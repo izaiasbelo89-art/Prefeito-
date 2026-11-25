@@ -15,7 +15,7 @@ def fade(x, fi=.01, fo=.02):
 full = rd('out/orig_full.wav'); riso = rd('out/orig_riso.wav')
 cut = lambda a, b: full[int(a * SR):int(b * SR)]
 for s in T['TL']:
-    if s['k'] != 'play': continue
+    if s['k'] != 'play' or s['v'] < 0: continue
     x = cut(s['a'], s['b'])
     if s['v'] != 1: x = lp(resample(x, int(len(x) / s['v'])), 3500)
     add(fade(x), s['t0'], 1.3)
@@ -28,8 +28,11 @@ def boom():
     return np.tanh(x * 1.6) * .9
 def whoosh(d=.5):
     n = rng.standard_normal(int(SR * d)); t = tt(d); return (lp(n, 5000) - lp(n, 500)) * np.sin(np.pi * t / d) ** 2 * .45
-slow0 = next(s['t0'] for s in T['TL'] if s['k'] == 'play' and s['v'] < 1)
-add(whoosh(.5), slow0 - .25)
+def rewind(d):
+    t = tt(d); f = 900 + 2600 * (t / d); x = np.sin(2 * np.pi * np.cumsum(f) / SR) * .25 + (lp(rng.standard_normal(len(t)), 7000) - lp(rng.standard_normal(len(t)), 1500)) * .5
+    return x * (.6 + .4 * np.sin(2 * np.pi * 22 * t)) * np.minimum(1, t / .03) * np.minimum(1, (d - t) / .05) * .6
+for s in T['TL']:
+    if s['k'] == 'play' and s['v'] < 0: add(rewind(s['t1'] - s['t0'] + .05), s['t0'])
 for s in T['TL']:
     if s['k'] == 'freeze': add(boom(), s['t0'], 1.0)
 add(whoosh(.35), T['boi'] - .12, .8); add(whoosh(.35), T['riso'] - .12, .8)

@@ -10,8 +10,9 @@ const eo = t => 1 - Math.pow(1 - t, 3);
 const eio = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
 /* sequência: play [src0, src1, velocidade] | freeze [src, duração] (tempos do vídeo original) */
-const SEQ = [['play', 14.2, 19.75, 1], ['play', 19.75, 19.95, .35], ['freeze', 19.95, .85], ['play', 19.95, 20.25, .3], ['freeze', 20.25, .75],
-  ['play', 20.25, 20.48, .3], ['freeze', 20.48, 1.0], ['play', 20.48, 21.05, .6], ['play', 21.05, 23.8, 1]];
+// gancho (a queda) → rebobina → corrida desde o começo em tempo normal → trava só na queda
+const SEQ = [['play', 19.7, 20.48, .55], ['freeze', 20.48, .55], ['play', 20.48, 14.4, -15], ['play', 0, 19.95, 1], ['freeze', 19.95, .85],
+  ['play', 19.95, 20.25, 1], ['freeze', 20.25, .75], ['play', 20.25, 20.48, 1], ['freeze', 20.48, 1.1], ['play', 20.48, 23.8, 1]];
 let acc = 0; const TL = SEQ.map(s => { const d = s[0] === 'play' ? (s[2] - s[1]) / s[3] : s[2]; const r = { k: s[0], t0: acc, t1: acc + d, a: s[1], b: s[0] === 'play' ? s[2] : s[1], v: s[3] || 0 }; acc += d; return r; });
 const T = { fim: acc }; T.boi = T.fim; T.riso = T.boi + 1.8; const DUR = T.riso + 3.3;
 function seg(t) { return TL.find(s => t < s.t1) || TL[TL.length - 1]; }
@@ -21,8 +22,9 @@ window.TIMES = { TL, ...T, DUR };
 const pad = n => String(n).padStart(4, '0');
 function frames(t) {
   if (t < T.fim) { const x = src(t);
+    if (x < 14.2) return [`inicio/${pad(clamp(Math.floor(x * 30) + 1, 1, 428))}`, null, 0];
     if (x < 19.5) return [`aprox/${pad(clamp(Math.floor((x - 14.2) * 30) + 1, 1, 163))}`, null, 0];
-    if (x < 21.05) { const f = (x - 19.5) * 60, i = Math.floor(f); return [`queda60/${pad(clamp(i + 1, 1, 93))}`, `queda60/${pad(clamp(i + 2, 1, 93))}`, seg(t).k === 'freeze' ? 0 : f - i]; }
+    if (x < 21.05) { const f = (x - 19.5) * 60, i = Math.floor(f); return [`queda60/${pad(clamp(i + 1, 1, 93))}`, `queda60/${pad(clamp(i + 2, 1, 93))}`, seg(t).k === 'freeze' || seg(t).v !== .55 ? 0 : f - i]; }
     return [`chao/${pad(clamp(Math.floor((x - 21.0) * 30) + 1, 1, 87))}`, null, 0]; }
   if (t < T.riso) return [`boi/${pad(Math.min(60, Math.floor((t - T.boi) * 30) + 1))}`, null, 0];
   return [`riso/${pad(Math.min(102, Math.floor((t - T.riso) * 30) + 1))}`, null, 0];
@@ -42,7 +44,8 @@ function cover(im, zoom, fx, fy, alpha = 1) {
 }
 const KEYS = (k, x) => { for (let i = 0; i < k.length - 1; i++) { const [a, x0, y0, z0] = k[i], [b, x1, y1, z1] = k[i + 1]; if (x <= b) { const q = eio(P(x, a, b)); return [lerp(x0, x1, q), lerp(y0, y1, q), lerp(z0, z1, q)]; } } return k[k.length - 1].slice(1); };
 // câmera: acompanha o vaqueiro (frações do quadro + zoom), mais aberta que antes
-const CAM = [[14.2, .57, .45, 1.45], [15.5, .6, .43, 1.55], [16.5, .55, .40, 1.6], [17.5, .48, .36, 1.7], [18.5, .50, .36, 1.75], [19.55, .56, .34, 1.85],
+const CAM = [[0, .45, .60, 1.35], [1, .5, .58, 1.35], [2, .54, .52, 1.38], [3, .58, .48, 1.4], [4, .68, .41, 1.42], [5, .66, .36, 1.45], [6, .72, .35, 1.45], [7, .64, .40, 1.45],
+  [8, .68, .38, 1.45], [9, .63, .40, 1.45], [10, .62, .43, 1.45], [11, .58, .45, 1.45], [12, .61, .42, 1.45], [13, .6, .44, 1.45], [14.2, .57, .45, 1.45], [15.5, .6, .43, 1.55], [16.5, .55, .40, 1.6], [17.5, .48, .36, 1.7], [18.5, .50, .36, 1.75], [19.55, .56, .34, 1.85],
   [19.8, .55, .335, 2.0], [20.0, .54, .345, 2.1], [20.2, .54, .37, 2.1], [20.35, .52, .40, 2.05], [20.5, .49, .425, 2.0], [20.7, .45, .44, 1.9], [21.05, .42, .445, 1.75],
   [22.0, .40, .44, 1.65], [23.8, .40, .44, 1.55]];
 // alvo do zoom de cada travamento
@@ -67,6 +70,8 @@ function render(t) {
       fx = lerp(fx, p[0], k); fy = lerp(fy, p[1], k); z = z * lerp(1, p[2], k) * (1 + .015 * dt);
       const sh = Math.exp(-dt * 14) * 26; ctx.translate(Math.sin(dt * 95) * sh, Math.cos(dt * 80) * sh); }
     cover(FR.get(k1), z, fx, fy); if (k2 && mixF > .02) cover(FR.get(k2), z, fx, fy, mixF);
+    if (s.v < 0) { ctx.fillStyle = 'rgba(255,255,255,.08)'; for (let i = 0; i < 14; i++) { const yy = ((i * 173 + t * 2600) % 2000) - 40; ctx.fillRect(-40, yy, W + 80, 10 + (i % 3) * 8); }
+      ctx.font = '800 64px Inter, sans-serif'; ctx.fillStyle = '#fff'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('◀◀', 70, 1700); }
     if (s.k === 'freeze') { const f = 1 - P(t - s.t0, 0, .1); if (f > 0) { ctx.fillStyle = `rgba(255,255,255,${.5 * f})`; ctx.fillRect(-40, -40, W + 80, H + 80); } }
   } else if (t < T.riso) cover(FR.get(k1), lerp(1.12, 1.25, P(t, T.boi, T.riso)), .45, .3);
   else cover(FR.get(k1), lerp(1.04, 1.1, P(t, T.riso, DUR)), .5, .4);
